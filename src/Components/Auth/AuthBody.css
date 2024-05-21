@@ -1,0 +1,349 @@
+.authBody{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px 5%;
+    background-color: var(--bgColor-1);
+    .left{
+        width: 55%;
+        background-color: var(--bgColor-2);
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 20px 0 20px 50px;
+        border-radius: 20px;
+        img{
+            width: calc(100% - 30px);
+            height: calc(100vh - 100px);
+            border-radius: 20px 0 0 20px;
+        }
+    }
+    .right{
+        width: 45%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+/* login */
+
+.login{
+    width: 100%;
+    background-color: var(--bgColor-1);
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 5px 5%;
+    flex-direction: column;
+    gap: 1rem;
+    >span{
+        font-weight: 500;
+        color: var(--textColor-1);
+        font-size: 1.1rem;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: .5rem;
+    }
+    .logo{
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 1rem;
+        img{
+            width: 50px;
+        }
+        h1{
+            font-weight: 400;
+            color: var(--textColor-1);
+            text-transform: uppercase;
+            font-size: 2rem;
+        }
+    }
+    .head{
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: .2rem;
+        h3{
+            font-weight: 400;
+            color: var(--textColor-1);
+            font-size: 1.7rem;
+        }
+        h5{
+            font-weight: 400;
+            color: var(--textColor-2);
+            font-size: .9rem;
+        }
+    }
+    form{
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: .5rem;
+        width: 100%;
+        .otpControl{
+            display: flex;
+            justify-content: flex-start;
+            width: 100%;
+            align-items: center;
+            gap: 1rem;
+            input.active{
+                border: 1px solid var(--secColor-2);
+            }
+            input{
+                width: 40px;
+                height: 40px;
+                border-radius: 5px;
+                border: 1px solid #cacece;
+                padding: 10px;
+                text-align: center;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 1.1rem;
+                font-weight: 700;
+            }
+            input:focus{
+                outline-width: 0;
+            }
+        }
+        .inputControl{
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            flex-direction: column;
+            border: 1px solid var(--secColor-2);
+            padding: 5px 10px;
+            width: 100%;
+            border-radius: 10px;
+            label{
+                width: 100%;
+                font-weight: 300;
+                color: var(--secColor-2);
+                font-size: .7rem;
+            }
+            input{
+                width: 100%;
+                border: none;
+                font-weight: 500;
+                color: var(--textColor-1);
+                font-size: 1.1rem;
+            }
+            input:focus{
+                outline-width: 0;
+            }
+        }
+        .passControl{
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: .5rem;
+            border: 1px solid var(--secColor-2);
+            padding: 5px 10px;
+            width: 100%;
+            border-radius: 10px;
+            .box{
+                display: flex;
+                justify-content: flex-start;
+                align-items: flex-start;
+                flex-direction: column;
+                width: calc(100% - 1.6rem);
+                label{
+                    width: 100%;
+                    font-weight: 300;
+                    color: var(--secColor-2);
+                    font-size: .7rem;
+                }
+                input{
+                    width: 100%;
+                    border: none;
+                    font-weight: 500;
+                    color: var(--textColor-1);
+                    font-size: 1.1rem;
+                }
+                input:focus{
+                    outline-width: 0;
+                }
+            }
+            .icon{
+                font-size: 1.1rem;
+                color: var(--textColor-1);
+            }
+        }
+        .control{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+            .remember{
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                gap: .5rem;
+                input{
+                    -webkit-appearance: none;
+                    background-color: var(--bgColor-1);
+                    border: 1px solid #cacece;
+                    box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05);
+                    border-radius: 3px;
+                    position: relative;
+                    width: 20px;
+                    height: 20px;
+                    transition: var(--transition);
+                }
+                input:active, input:checked:active {
+                    box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px 1px 3px rgba(0,0,0,0.1);
+                }
+                
+                input:checked {
+                    background-color: var(--secColor-2);
+                    border: 1px solid var(--secColor-1);
+                    box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05), inset 15px 10px -12px rgba(255,255,255,0.1);
+                    color: var(--bgColor-1);
+                }
+                input:checked:after {
+                    content: '\2714';
+                    font-size: .8rem;
+                    position: absolute;
+                    top: 0px;
+                    left: 3px;
+                    width: 100%;
+                    height: 100%;
+                    color: #fafafa;
+                }
+                label{
+                    font-weight: 400;
+                    color: var(--textColor-1);
+                    font-size: .9rem;
+                }
+            }
+            span{
+                font-weight: 400;
+                color: var(--secColor-2);
+                font-size: .9rem;
+                cursor: pointer;
+            }
+            span:hover{
+                color: var(--secColor-3);
+                transition: var(--transition);
+            }
+        }
+        input[type="submit"]{
+            margin-top: 1rem;
+            width: 100%;
+            padding: 10px 20px;
+            color: var(--bgColor-1);
+            background-color: var(--secColor-2);
+            border-radius: 10px;
+            border: none;
+            font-size: .9rem;
+            font-weight: 400;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        input[type="submit"]:hover{
+            background-color: var(--secColor-3);
+        }
+    }
+}
+
+/* Responsiveness */
+
+/* Tablets */
+@media screen and (max-width:999px) {
+  .authBody .left{
+    display: none;
+  }
+  .authBody .right{
+    width: 100%;
+  }
+}
+/* Mobiles */
+@media screen and (max-width:599px) {
+
+    .login{
+        >span{
+            font-size: .9rem;
+        }
+        .logo{
+            img {
+            width: 30px;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+        .head{
+            h3{
+                font-size: 1.2rem;
+            }
+            h5 {
+                font-size: .7rem;
+            }
+        }
+        form{
+            .otpControl{
+                input{
+                    width: calc(calc(100% - 4rem) / 5);
+                    height: 35px;
+                    padding: 5px;
+                    font-size: .9rem;
+                }
+                input:focus{
+                    outline-width: 0;
+                }
+            }
+            .inputControl{
+                label{
+                    font-size: .6rem;
+                }
+                input{
+                    font-size: .9rem;
+                }
+            }
+            .passControl{
+                .box{
+                    label{
+                        font-size: .6rem;
+                    }
+                    input{
+                        font-size: .9rem;
+                    }
+                }
+            }
+            .control{
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: center;
+                .remember{
+                    label{
+                        font-size: .8rem;
+                    }
+                    input{
+                        width: 15px;
+                        height: 15px;
+                    }
+                    input:checked:after {
+                        font-size: .6rem;
+                    }
+                }
+                span{
+                    font-size: .8rem;
+                }
+            }
+            input[type="submit"] {
+                border-radius: 5px;
+            }
+        }
+    }
+}
+/* End responsivess */

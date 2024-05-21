@@ -1,0 +1,44 @@
+@import url(https://fonts.googleapis.com/css?family=Lexend:100,200,300,regular,500,600,700,800,900);
+
+:root{
+  /* Light */
+  --bgColor-1:#fff;
+  --bgColor-2:#F8F6FE;
+  --secColor-1:#8D75F5;
+  --secColor-2:#7152F3;
+  --secColor-3:#B21589;
+  --textColor-1:#16151C;
+  --textColor-2:#A2A1A8;
+  --transition:all .4s;
+}
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+  list-style-type: none;
+  text-decoration: none;
+  font-family: Lexend;
+}
+
+::-webkit-scrollbar{
+  display: none;
+}
+
+html{
+  scroll-behavior: smooth;
+}
+
+
+/* Responsiveness */
+
+/* Tablets */
+@media screen and (max-width:999px) {
+  
+}
+/* Mobiles */
+@media screen and (max-width:599px) {
+  
+}
+/* End responsivess */
