@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
 const AuthBody = () => {
-// States
+  // States
   const [component,setComponent] = useState(Constants.LOGIN)
   const [otp,setOTP] = useState('');
   const [updateData,setUpdateData] = useState({});

@@ -9,7 +9,11 @@
   --secColor-3:#B21589;
   --textColor-1:#16151C;
   --textColor-2:#A2A1A8;
+  --toggleBtn:#34C759;
+  --pannelColor:#FAFAFB;
+  --pannelHoverColor:#F3F2FB;
   --transition:all .4s;
+  --textColor-3:#F45B69;
 }
 
 *{
@@ -32,6 +36,11 @@ html{
 
 
 /* Responsiveness */
+/* Sizes
+1. Laptop: 1000px - infinity
+2. Tablets: 600px - 999px
+3. Mobile: 0px - 599px
+*/
 
 /* Tablets */
 @media screen and (max-width:999px) {

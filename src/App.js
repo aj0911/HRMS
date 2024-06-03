@@ -11,7 +11,8 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(()=>{
-    if(!auth.remember)dispatch(logout())
+    const currDate = new Date(Date.now()) 
+    if(!auth.remember && currDate.getTime() >= auth.remember_token)dispatch(logout())
   },[])
 
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route exact path="/auth" element={<AuthBody/>}/>
         <Route exact path="/" element={<Dashboard/>}/>
       </Routes>
+      {/* Sweet Alerts */}
       <Toaster position="top-right"/>
     </div>
   );

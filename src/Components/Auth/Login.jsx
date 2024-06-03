@@ -101,7 +101,7 @@ const Login = ({setComponent}) => {
                         <label onClick={e=>handleFocus(e)} htmlFor="pass">Password</label>
                         <input type={showPassword?"text":"password"} name="pass"  onChange={e=>setUserData({...userData,pass:e.target.value})}/>
                     </div>
-                    {showPassword?<AiFillEye className='icon' onClick={()=>setShowPassword(!showPassword)}/>:<AiFillEyeInvisible  className='icon' onClick={()=>setShowPassword(!showPassword)}/>}
+                    {showPassword?<AiFillEye className='icon' onClick={()=>setShowPassword(prev=>!prev)}/>:<AiFillEyeInvisible  className='icon' onClick={()=>setShowPassword(prev=>!prev)}/>}
                 </div>
                 <div className="control">
                     <div className="remember">
