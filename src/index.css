@@ -1,22 +1,33 @@
 @import url(https://fonts.googleapis.com/css?family=Lexend:100,200,300,regular,500,600,700,800,900);
 
-:root{
-  /* Light */
-  --bgColor-1:#fff;
-  --bgColor-2:#F8F6FE;
-  --secColor-1:#8D75F5;
-  --secColor-2:#7152F3;
-  --secColor-3:#B21589;
+:root {
+  /* Common Colors */
+  --bgColor-2: #f8f6fe;
+  --secColor-1: #8d75f5;
+  --secColor-2: #7152f3;
+  --secColor-3: #b21589;
+  --toggleBtn: #34c759;
+  --textColor-3: #f45b69;
+
+  /* Light Mode Colors*/
+  /* --bgColor-1:#fff;
   --textColor-1:#16151C;
   --textColor-2:#A2A1A8;
-  --toggleBtn:#34C759;
   --pannelColor:#FAFAFB;
   --pannelHoverColor:#F3F2FB;
-  --transition:all .4s;
-  --textColor-3:#F45B69;
+  */
+
+  /* Dark Mode Colors*/
+  /* --bgColor-1:#16151C;
+  --textColor-1:#FFFFFF;
+  --textColor-2:#9F9EA5;
+  --pannelColor:#1D1C23;
+  --pannelHoverColor:#211F2D; */
+
+  --transition: all 0.4s;
 }
 
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -26,14 +37,13 @@
   font-family: Lexend;
 }
 
-::-webkit-scrollbar{
+::-webkit-scrollbar {
   display: none;
 }
 
-html{
+html {
   scroll-behavior: smooth;
 }
-
 
 /* Responsiveness */
 /* Sizes
@@ -43,11 +53,9 @@ html{
 */
 
 /* Tablets */
-@media screen and (max-width:999px) {
-  
+@media screen and (max-width: 999px) {
 }
 /* Mobiles */
-@media screen and (max-width:599px) {
-  
+@media screen and (max-width: 599px) {
 }
 /* End responsivess */

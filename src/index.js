@@ -12,17 +12,17 @@ import store from "./store.js"
 import { PersistGate } from "redux-persist/integration/react"
 import { persistStore } from "redux-persist"
 
-const loadSuperAdmin = ()=>{
-  onValue(ref(db,`users/`), (snapshot) => {
+const loadSuperAdmin = () => {
+  onValue(ref(db, `users/`), (snapshot) => {
     const data = snapshot.val();
-    if(data=== null || Object.keys(data).length ===0){
+    if (data === null || Object.keys(data).length === 0) {
       const id = uid();
       set(ref(db, 'users/' + id), {
         id,
-        email:process.env.REACT_APP_SUPERADMIN_EMAIL,
-        pass:encryptData(process.env.REACT_APP_SUPERADMIN_PASSWORD),
-        role:Roles.SUPER_ADMIN,
-        time:Date.now()
+        email: process.env.REACT_APP_SUPERADMIN_EMAIL,
+        pass: encryptData(process.env.REACT_APP_SUPERADMIN_PASSWORD),
+        role: Roles.SUPER_ADMIN,
+        time: Date.now()
       });
     }
   });
@@ -31,13 +31,12 @@ const loadSuperAdmin = ()=>{
 loadSuperAdmin()
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-
 root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Provider store={store}>
         <PersistGate persistor={persistStore(store)}>
-          <App/>
+          <App />
         </PersistGate>
       </Provider>
     </BrowserRouter>
