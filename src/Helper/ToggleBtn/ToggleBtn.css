@@ -1,0 +1,22 @@
+.toggleContainer{
+    background-color: var(--pannelHoverColor);
+    border-radius: 30px;
+    position: relative;
+    .toggleSlider{
+        position: absolute;
+        top: 2%;
+        left: 2%;
+        height: 96%;
+        width: 48%;
+        border-radius: 50%;
+        background-color: #fff;
+        box-shadow: 1px 1px 10px rgba(0,0,0,0.4);
+        transition: all .2s;
+    }
+}
+.toggleContainer.active{
+    background-color: var(--toggleBtn);
+    .toggleSlider{
+        left:50% 
+    }
+}

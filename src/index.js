@@ -19,6 +19,7 @@ const loadSuperAdmin = () => {
       const id = uid();
       set(ref(db, 'users/' + id), {
         id,
+        name:process.env.REACT_APP_SUPERADMIN_NAME,
         email: process.env.REACT_APP_SUPERADMIN_EMAIL,
         pass: encryptData(process.env.REACT_APP_SUPERADMIN_PASSWORD),
         role: Roles.SUPER_ADMIN,

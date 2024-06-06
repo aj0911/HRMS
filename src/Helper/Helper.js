@@ -62,6 +62,7 @@ export const COLORS = {
         '--textColor-2': '#A2A1A8',
         '--pannelColor': '#FAFAFB',
         '--pannelHoverColor': '#F3F2FB',
+        '--borderColor-1':'#ECECEE'
     },
     DARK:{
         '--bgColor-1': '#16151C',
@@ -69,5 +70,19 @@ export const COLORS = {
         '--textColor-2': '#9F9EA5',
         '--pannelColor': '#1D1C23',
         '--pannelHoverColor': '#211F2D',
+        '--borderColor-1':'#323138'
     }
+}
+
+export const greeting = ()=>{
+    const greets = [
+        'Good Morning',
+        'Good Afternoon',
+        'Good Evening'
+    ]
+    var day = new Date();
+    var hr = day.getHours();
+    if(hr>=0 && hr<=12)return greets[0];
+    if(hr>12 && hr<=16)return greets[1];
+    return greets[2];
 }

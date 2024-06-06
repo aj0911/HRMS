@@ -154,7 +154,7 @@
           gap: 0.5rem;
           font-size: 1.1rem;
           color: var(--textColor-2);
-          border: 1px solid var(--textColor-2);
+          border: 1px solid var(--borderColor-1);
           border-radius: 5px;
           padding: 10px;
           input {
@@ -169,6 +169,16 @@
           }
           input:focus {
             outline-width: 0;
+          }
+          input:-webkit-autofill,
+          input:-webkit-autofill:focus {
+              transition: background-color 600000s 0s, color 600000s 0s;
+          }
+          input:-webkit-autofill{
+              -webkit-text-fill-color: var(--textColor-1);
+          }
+          input[data-autocompleted] {
+              background-color: transparent !important;
           }
         }
         .notification {
@@ -224,6 +234,9 @@
         }
       }
     }
+    .box{
+      width: 100%;
+    }
   }
 }
 
@@ -277,6 +290,63 @@
     h3 {
       font-weight: 300;
       font-size: 0.9rem;
+    }
+  }
+}
+
+.Settings{
+  width: 100%;
+  border: 1px solid var(--borderColor-1);
+  padding: 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
+  border-radius: 10px;
+  .setting{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid var(--borderColor-1);
+    padding-bottom: 10px;
+    .left{
+      width: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-direction: column;
+      gap: .2rem;
+      h3{
+        font-size: 1.1rem;
+        font-weight: 400;
+        color: var(--textColor-1);
+      }
+      h5{
+        font-size: .8rem;
+        font-weight: 300;
+        color: var(--textColor-2);
+      }
+    }
+    .right{
+      width: 50%;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      .select{
+        border-radius: 5px;
+        padding: 5px;
+        background-color: var(--pannelHoverColor);
+        color: var(--textColor-1);
+        font-size: .9rem;
+        font-weight: 300;
+        border: none;
+      }
+      .select:focus{
+        outline-width: 0;
+      }
     }
   }
 }

@@ -116,6 +116,16 @@
             input:focus{
                 outline-width: 0;
             }
+            input:-webkit-autofill,
+            input:-webkit-autofill:focus {
+                transition: background-color 600000s 0s, color 600000s 0s;
+            }
+            input:-webkit-autofill{
+                -webkit-text-fill-color: var(--textColor-1);
+            }
+            input[data-autocompleted] {
+                background-color: transparent !important;
+            }
         }
         .inputControl{
             display: flex;
@@ -142,6 +152,20 @@
             }
             input:focus{
                 outline-width: 0;
+            }
+            /* input:-webkit-autofill{
+                -webkit-background-clip: var(--bgColor-1) !important;
+                -webkit-text-fill-color: var(--textColor-1) !important;
+            } */
+            input:-webkit-autofill,
+            input:-webkit-autofill:focus {
+                transition: background-color 600000s 0s, color 600000s 0s;
+            }
+            input:-webkit-autofill{
+                -webkit-text-fill-color: var(--textColor-1);
+            }
+            input[data-autocompleted] {
+                background-color: transparent !important;
             }
         }
         .passControl{

@@ -19,7 +19,7 @@ import { TbUsers } from "react-icons/tb";
 import { IoLogOutOutline } from "react-icons/io5";
 import { logout } from "../../Reducers/Auth";
 import { toggleDarkMode, togglelightMode } from "../../Reducers/Theme";
-import { COLORS, MODES } from "../../Helper/Helper";
+import { COLORS, MODES, greeting } from "../../Helper/Helper";
 import DashboardBox from "./DashboardBox";
 import Employees from "./Employees/Employees";
 import Attendance from "./Attendance/Attendance";
@@ -38,60 +38,6 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [viewOptions, setViewOptions] = useState(false);
   const dispatch = useDispatch();
-
-  //navigationsMenus
-  const menus = [
-    {
-      name: "Dashboard",
-      icon: <BiSolidDashboard />,
-      component: <DashboardBox />,
-    },
-    {
-      name: "All Employees",
-      icon: <PiUsersThree />,
-      component: <Employees />,
-    },
-    {
-      name: "All Departments",
-      icon: <PiUserSwitchDuotone />,
-      component: <Departments />,
-    },
-    {
-      name: "Attendance",
-      icon: <LuCalendarCheck />,
-      component: <Attendance />,
-    },
-    {
-      name: "Payroll",
-      icon: <AiOutlineDollar />,
-      component: <Payroll />,
-    },
-    {
-      name: "Jobs",
-      icon: <FaBriefcase />,
-      component: <Jobs />,
-    },
-    {
-      name: "Candidates",
-      icon: <TbUsers />,
-      component: <Candidates />,
-    },
-    {
-      name: "Leaves",
-      icon: <LuClipboardList />,
-      component: <Leaves />,
-    },
-    {
-      name: "Holidays",
-      icon: <FaRegCalendarAlt />,
-      component: <Holidays />,
-    },
-    {
-      name: "Settings",
-      icon: <LuSettings />,
-      component: <Settings />,
-    },
-  ];
   const [component, setComponent] = useState(0);
 
   //handling Functions
@@ -100,6 +46,7 @@ const Dashboard = () => {
     navigate("/Auth");
   };
   const handleTheme = (mode) => {
+    console.log('on')
     //Dark Mode
     if (mode === MODES.DARK) {
       dispatch(toggleDarkMode());
@@ -115,6 +62,70 @@ const Dashboard = () => {
       );
     }
   };
+
+  //navigationsMenus
+  const menus = [
+    {
+      name: "Dashboard",
+      icon: <BiSolidDashboard />,
+      component: <DashboardBox />,
+      heading: [`Hello ${auth.user?.name} 👋🏻`, greeting()],
+    },
+    {
+      name: "All Employees",
+      icon: <PiUsersThree />,
+      component: <Employees />,
+      heading: [`All Employees`, `All Employee Information`],
+    },
+    {
+      name: "All Departments",
+      icon: <PiUserSwitchDuotone />,
+      component: <Departments />,
+      heading: [`All Departments`, `All Departments Information`],
+    },
+    {
+      name: "Attendance",
+      icon: <LuCalendarCheck />,
+      component: <Attendance />,
+      heading: [`Attendance`, `All Employee Attendance`],
+    },
+    {
+      name: "Payroll",
+      icon: <AiOutlineDollar />,
+      component: <Payroll />,
+      heading: [`Payroll`, `All Employee Payroll`],
+    },
+    {
+      name: "Jobs",
+      icon: <FaBriefcase />,
+      component: <Jobs />,
+      heading: [`Jobs`, `Show All Jobs`],
+    },
+    {
+      name: "Candidates",
+      icon: <TbUsers />,
+      component: <Candidates />,
+      heading: [`Candidates`, `Show All Candidates`],
+    },
+    {
+      name: "Leaves",
+      icon: <LuClipboardList />,
+      component: <Leaves />,
+      heading: [`Leaves`, `View All Leaves`],
+    },
+    {
+      name: "Holidays",
+      icon: <FaRegCalendarAlt />,
+      component: <Holidays />,
+      heading: [`Holidays`, `All Holidays List`],
+    },
+    {
+      name: "Settings",
+      icon: <LuSettings />,
+      component: <Settings handleTheme={handleTheme} />,
+      heading: [`Settings`, `All System Settings`],
+    },
+  ];
 
   // Rendering
   useEffect(() => {
@@ -161,8 +172,8 @@ const Dashboard = () => {
         <div className="right">
           <div className="header">
             <div className="left">
-              <h3>Settings</h3>
-              <h5>All System Settings</h5>
+              <h3>{menus[component]?.heading[0]}</h3>
+              <h5>{menus[component]?.heading[1]}</h5>
             </div>
             <div className="right">
               <div className="search">
@@ -175,18 +186,18 @@ const Dashboard = () => {
               <div onClick={() => setViewOptions(true)} className="profile">
                 <img src={require("../../Assets/Images/user.png")} alt="" />
                 <div className="content">
-                  <h3>Abhinav Jha</h3>
-                  <h5>Software Engineer</h5>
+                  <h3>{auth.user?.name}</h3>
+                  <h5>{auth.user?.department || "Admin"}</h5>
                 </div>
                 <FaChevronDown />
               </div>
             </div>
           </div>
-          <div className="box">
-            {menus.map((x, i) => {
-              if (i === component) return x.component;
-            })}
-          </div>
+
+          {menus.map((x, i) => {
+            if (i === component)
+              return <div key={i} className="box">{x.component}</div>;
+          })}
         </div>
       </div>
       {viewOptions ? (
