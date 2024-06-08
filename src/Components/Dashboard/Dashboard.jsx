@@ -46,7 +46,7 @@ const Dashboard = () => {
     navigate("/Auth");
   };
   const handleTheme = (mode) => {
-    console.log('on')
+    console.log("on");
     //Dark Mode
     if (mode === MODES.DARK) {
       dispatch(toggleDarkMode());
@@ -196,7 +196,11 @@ const Dashboard = () => {
 
           {menus.map((x, i) => {
             if (i === component)
-              return <div key={i} className="box">{x.component}</div>;
+              return (
+                <div key={i} className="box">
+                  {x.component}
+                </div>
+              );
           })}
         </div>
       </div>

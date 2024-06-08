@@ -1,14 +1,14 @@
 import React from "react";
-import { MODES } from "../../Helper/Helper";
+import { MODES,sendDesktopNotification } from "../../Helper/Helper";
 import ToggleBtn from "../../Helper/ToggleBtn/ToggleBtn";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import SettingServices from "../../Services/SettingServices";
 
-const Settings = ({handleTheme}) => {
+const Settings = ({ handleTheme }) => {
   // States
   const theme = useSelector((state) => state.theme);
-
   // Methods
-
+  
   // Settings Array
   const settings = [
     {
@@ -82,7 +82,11 @@ const Settings = ({handleTheme}) => {
                 ))}
               </select>
             ) : (
-              <ToggleBtn value={setting.toggleOption} size={20} />
+              <ToggleBtn
+                onToggle={(val) => console.log(val)}
+                initialValue={setting.toggleOption}
+                size={20}
+              />
             )}
           </div>
         </div>

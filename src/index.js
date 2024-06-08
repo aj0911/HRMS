@@ -6,11 +6,12 @@ import { BrowserRouter } from 'react-router-dom';
 import { onValue, ref, set } from 'firebase/database';
 import { db } from './firebase';
 import { uid } from 'uid';
-import { Roles, encryptData } from './Helper/Helper';
+import { MODES, Roles, encryptData } from './Helper/Helper';
 import { Provider } from "react-redux"
 import store from "./store.js"
 import { PersistGate } from "redux-persist/integration/react"
 import { persistStore } from "redux-persist"
+import SettingServices from './Services/SettingServices.js';
 
 const loadSuperAdmin = () => {
   onValue(ref(db, `users/`), (snapshot) => {
@@ -25,6 +26,12 @@ const loadSuperAdmin = () => {
         role: Roles.SUPER_ADMIN,
         time: Date.now()
       });
+      SettingServices.initializeSettings({
+        user:id,
+        mode:MODES.DARK,
+        desktopNotification:false,
+        emailNotification:true
+      })
     }
   });
 }
