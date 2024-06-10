@@ -39,6 +39,7 @@ const Dashboard = () => {
   const [viewOptions, setViewOptions] = useState(false);
   const dispatch = useDispatch();
   const [component, setComponent] = useState(0);
+  const [active,setActive] = useState(false);
 
   //handling Functions
   const handleLogout = () => {
@@ -135,7 +136,7 @@ const Dashboard = () => {
   return (
     <>
       <div className={`Dashboard`}>
-        <div className="left">
+        <div className={`left ${active?'active':''}`}>
           <div className="logo">
             <img src={require("../../Assets/Images/logo.png")} alt="" />
             <h1>HRMS</h1>
@@ -144,7 +145,7 @@ const Dashboard = () => {
             {menus.map((menu, key) => (
               <button
                 className={key === component ? "active" : ""}
-                onClick={() => setComponent(key)}
+                onClick={() => {setComponent(key);setActive(false)}}
                 key={key}
               >
                 {menu.icon}
@@ -172,8 +173,13 @@ const Dashboard = () => {
         <div className="right">
           <div className="header">
             <div className="left">
-              <h3>{menus[component]?.heading[0]}</h3>
-              <h5>{menus[component]?.heading[1]}</h5>
+              <div className="menu" onClick={()=>setActive(prev=>!prev)}>
+                <div className="bar"></div>
+              </div>
+              <div className="heading">
+                <h3>{menus[component]?.heading[0]}</h3>
+                <h5>{menus[component]?.heading[1]}</h5>
+              </div>
             </div>
             <div className="right">
               <div className="search">
@@ -189,7 +195,7 @@ const Dashboard = () => {
                   <h3>{auth.user?.name}</h3>
                   <h5>{auth.user?.department || "Admin"}</h5>
                 </div>
-                <FaChevronDown />
+                <FaChevronDown className="icon" />
               </div>
             </div>
           </div>
