@@ -1,13 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./ToggleBtn.css";
 
 const ToggleBtn = ({ size, initialValue = false, onToggle = () => {} }) => {
   //States
   const [active, setActive] = useState(initialValue);
+  const isInitialMount = useRef(true);
 
   //Rendering
   useEffect(() => {
-    onToggle(active);
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+    } else {
+      onToggle(active);
+    }
   }, [active]);
 
   return (

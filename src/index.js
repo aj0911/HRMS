@@ -11,13 +11,14 @@ import { Provider } from "react-redux"
 import store from "./store.js"
 import { PersistGate } from "redux-persist/integration/react"
 import { persistStore } from "redux-persist"
-import SettingServices from './Services/SettingServices.js';
+import SettingService from './Services/SettingService.js';
 
 const loadSuperAdmin = () => {
   onValue(ref(db, `users/`), (snapshot) => {
     const data = snapshot.val();
     if (data === null || Object.keys(data).length === 0) {
       const id = uid();
+      //Creating an admin
       set(ref(db, 'users/' + id), {
         id,
         name:process.env.REACT_APP_SUPERADMIN_NAME,
@@ -26,11 +27,13 @@ const loadSuperAdmin = () => {
         role: Roles.SUPER_ADMIN,
         time: Date.now()
       });
-      SettingServices.initializeSettings({
+
+      //Creating Settings for admin
+      SettingService.create({
         user:id,
-        mode:MODES.DARK,
-        desktopNotification:false,
-        emailNotification:true
+        mobile_notify:false,
+        desktop_notify:false,
+        email_notify:true
       })
     }
   });

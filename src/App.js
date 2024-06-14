@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import AuthBody from "./Components/Auth/AuthBody";
 import { Toaster } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,11 +10,14 @@ function App() {
   const auth = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.theme);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const currDate = new Date(Date.now());
-    if (!auth.remember && currDate.getTime() >= auth.remember_token)
+    if (!auth.remember && currDate.getTime() >= auth.remember_token){
       dispatch(logout());
+      navigate('/auth')
+    }
     Object.keys(theme.colors).forEach((x) =>
       document.documentElement.style.setProperty(x, theme.colors[x])
     );

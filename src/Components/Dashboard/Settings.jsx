@@ -1,14 +1,17 @@
-import React from "react";
-import { MODES,sendDesktopNotification } from "../../Helper/Helper";
+import React, { useEffect, useState } from "react";
+import { MODES, sendDesktopNotification } from "../../Helper/Helper";
 import ToggleBtn from "../../Helper/ToggleBtn/ToggleBtn";
 import { useSelector } from "react-redux";
-import SettingServices from "../../Services/SettingServices";
+import SettingService from "../../Services/SettingService";
+import Loader from "../Loader/Loader";
+import toast from "react-hot-toast";
 
 const Settings = ({ handleTheme }) => {
   // States
   const theme = useSelector((state) => state.theme);
+  const auth = useSelector((state) => state.auth);
   // Methods
-  
+
   // Settings Array
   const settings = [
     {
@@ -48,20 +51,40 @@ const Settings = ({ handleTheme }) => {
     {
       name: "Mobile Push Notifications",
       description: "Receive push notification",
-      toggleOption: false,
+      type:'mobile_notify'
     },
     {
       name: "Desktop Notification",
       description: "Receive push notification  in desktop",
-      toggleOption: false,
+      type:'desktop_notify'
     },
     {
       name: "Email Notifications",
       description: "Receive email notification",
-      toggleOption: true,
+      type:'email_notify'
     },
   ];
+  const [data, setData] = useState(null);
+
+  const handleToggleChange = async(val,opt)=>{
+   await SettingService.update(data.id,{...data,[opt]:val})
+   setData({...data,[opt]:val})
+   toast.success('Setting Updated Successfully')
+  }
+
+  const getData = async () => {
+    const val = await SettingService.read(
+      await SettingService.getSettingID(auth.user?.id)
+    );
+    setData(val);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
   return (
+    data===null?<Loader size={50}/>:
     <div className="Settings">
       {settings.map((setting, key) => (
         <div key={key} className="setting">
@@ -83,9 +106,9 @@ const Settings = ({ handleTheme }) => {
               </select>
             ) : (
               <ToggleBtn
-                onToggle={(val) => console.log(val)}
-                initialValue={setting.toggleOption}
-                size={20}
+                onToggle={(val) =>handleToggleChange(val,setting.type)}
+                initialValue={data===null?true:data[setting.type]}
+                size={window.innerWidth < 599 ? 15 : 20}
               />
             )}
           </div>
