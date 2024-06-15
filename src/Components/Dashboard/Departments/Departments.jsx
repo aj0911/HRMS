@@ -34,6 +34,20 @@ const Departments = () => {
     setDepartments(val === null ? [] : Object.values(val));
   };
 
+  const handleChange = (text) => {
+    if (text === "") getAllDepartments();
+    else {
+      const val = [...departments];
+      console.log(val,text)
+      const updatedVal = [];
+      val.forEach(x=>{
+        if(x.name.toLowerCase().includes(text))updatedVal.push(x)
+      })
+      console.log(updatedVal)
+      setDepartments(updatedVal)
+    }
+  };
+
   useEffect(() => {
     getAllDepartments();
   }, [showAddModal]);
@@ -44,10 +58,10 @@ const Departments = () => {
     <>
       <div className="Departments">
         <div className="top">
-          <SearchBar />
+          <SearchBar onChange={(e) => handleChange(e.target.value)} />
           <button onClick={() => setShowAddModal(true)}>
-            <h3>Add More</h3>
             <FaPlusCircle />
+            <h3>Add More</h3>
           </button>
         </div>
         <div className="bottom">
@@ -57,40 +71,38 @@ const Departments = () => {
               <div className="department" key={key}>
                 <div className="header">
                   <div className="content">
-                    <h3>{department.name}</h3>
-                    <h5>{department.employees?.length || 0} Members</h5>
+                    <h3>{department?.name}</h3>
+                    <h5>{department?.employees?.length || 0} Members</h5>
                   </div>
                   <h3>View All</h3>
                 </div>
-                {
-                  (department.employees?.length===0)?
-                  <div className="employees">
-
-                  </div>
-                  :null
-                }
+                {department?.employees?.length === 0 ? (
+                  <div className="employees"></div>
+                ) : null}
               </div>
             ))}
         </div>
       </div>
       {showAddModal ? (
         <div className="modal">
-          <h3>Add New Department</h3>
-          <form onSubmit={(e) => handleAdd(e)}>
-            <input
-              onChange={(e) => setData({ name: e.target.value })}
-              type="text"
-              placeholder="Enter Department Name"
-            />
-            <div className="btns">
+          <div className="add">
+            <h3>Add New Department</h3>
+            <form onSubmit={(e) => handleAdd(e)}>
               <input
-                type="button"
-                value="Cancel"
-                onClick={() => setShowAddModal(false)}
+                onChange={(e) => setData({ name: e.target.value })}
+                type="text"
+                placeholder="Enter Department Name"
               />
-              <input type="submit" value="Add" />
-            </div>
-          </form>
+              <div className="btns">
+                <input
+                  type="button"
+                  value="Cancel"
+                  onClick={() => setShowAddModal(false)}
+                />
+                <input type="submit" value="Add" />
+              </div>
+            </form>
+          </div>
         </div>
       ) : null}
     </>

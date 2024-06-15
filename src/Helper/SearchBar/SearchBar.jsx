@@ -2,11 +2,11 @@ import React from 'react'
 import { FaSearch } from 'react-icons/fa'
 import './SearchBar.css'
 
-const SearchBar = () => {
+const SearchBar = ({onChange}) => {
   return (
     <div className="searchbar">
         <FaSearch />
-        <input type="text" placeholder="Search" />
+        <input onChange={onChange} type="text" placeholder="Search" />
     </div>
   )
 }
