@@ -1,0 +1,18 @@
+.Departments {
+  width: 100%;
+  border: 1px solid var(--borderColor-1);
+  padding: 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 1rem;
+  border-radius: 10px;
+  .top{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+}

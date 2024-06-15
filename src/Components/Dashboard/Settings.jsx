@@ -67,9 +67,11 @@ const Settings = ({ handleTheme }) => {
   const [data, setData] = useState(null);
 
   const handleToggleChange = async(val,opt)=>{
-   await SettingService.update(data.id,{...data,[opt]:val})
-   setData({...data,[opt]:val})
-   toast.success('Setting Updated Successfully')
+    if(data[opt]!==val){
+     await SettingService.update(data.id,{...data,[opt]:val})
+     setData({...data,[opt]:val})
+     toast.success('Setting Updated Successfully')
+    }
   }
 
   const getData = async () => {
