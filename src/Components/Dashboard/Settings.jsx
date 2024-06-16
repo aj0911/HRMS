@@ -10,6 +10,7 @@ const Settings = ({ handleTheme }) => {
   // States
   const theme = useSelector((state) => state.theme);
   const auth = useSelector((state) => state.auth);
+  const [loader,setLoader] = useState(false);
   // Methods
 
   // Settings Array
@@ -51,34 +52,38 @@ const Settings = ({ handleTheme }) => {
     {
       name: "Mobile Push Notifications",
       description: "Receive push notification",
-      type:'mobile_notify'
+      type: "mobile_notify",
     },
     {
       name: "Desktop Notification",
       description: "Receive push notification  in desktop",
-      type:'desktop_notify'
+      type: "desktop_notify",
     },
     {
       name: "Email Notifications",
       description: "Receive email notification",
-      type:'email_notify'
+      type: "email_notify",
     },
   ];
   const [data, setData] = useState(null);
 
-  const handleToggleChange = async(val,opt)=>{
-    if(data[opt]!==val){
-     await SettingService.update(data.id,{...data,[opt]:val})
-     setData({...data,[opt]:val})
-     toast.success('Setting Updated Successfully')
+  const handleToggleChange = async (val, opt) => {
+    if (data[opt] !== val) {
+      setLoader(true)
+      await SettingService.update(data.id, { ...data, [opt]: val });
+      setData({ ...data, [opt]: val });
+      toast.success("Setting Updated Successfully");
+      setLoader(false)
     }
-  }
+  };
 
   const getData = async () => {
+    setLoader(true)
     const val = await SettingService.read(
       await SettingService.getSettingID(auth.user?.id)
     );
     setData(val);
+    setLoader(false)
   };
 
   useEffect(() => {
@@ -86,36 +91,39 @@ const Settings = ({ handleTheme }) => {
   }, []);
 
   return (
-    data===null?<Loader size={50}/>:
     <div className="Settings">
-      {settings.map((setting, key) => (
-        <div key={key} className="setting">
-          <div className="left">
-            <h3>{setting.name}</h3>
-            <h5>{setting.description}</h5>
+      {data === null || loader ? (
+        <Loader size={50} fullHeight fullWidth />
+      ) : (
+        settings.map((setting, key) => (
+          <div key={key} className="setting">
+            <div className="left">
+              <h3>{setting.name}</h3>
+              <h5>{setting.description}</h5>
+            </div>
+            <div className="right">
+              {setting.selectOptions ? (
+                <select
+                  onChange={(e) => setting.handleSelect(e.target.value)}
+                  className="select"
+                >
+                  {setting.selectOptions.map((x, i) => (
+                    <option key={i} value={x.value} selected={x.selected}>
+                      {x.text}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <ToggleBtn
+                  onToggle={(val) => handleToggleChange(val, setting.type)}
+                  initialValue={data === null ? true : data[setting.type]}
+                  size={window.innerWidth < 599 ? 15 : 20}
+                />
+              )}
+            </div>
           </div>
-          <div className="right">
-            {setting.selectOptions ? (
-              <select
-                onChange={(e) => setting.handleSelect(e.target.value)}
-                className="select"
-              >
-                {setting.selectOptions.map((x, i) => (
-                  <option key={i} value={x.value} selected={x.selected}>
-                    {x.text}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <ToggleBtn
-                onToggle={(val) =>handleToggleChange(val,setting.type)}
-                initialValue={data===null?true:data[setting.type]}
-                size={window.innerWidth < 599 ? 15 : 20}
-              />
-            )}
-          </div>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   );
 };

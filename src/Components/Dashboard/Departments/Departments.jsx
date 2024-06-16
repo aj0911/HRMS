@@ -11,10 +11,13 @@ const Departments = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [data, setData] = useState("");
   const [departments, setDepartments] = useState(null);
+  const [loader, setLoader] = useState(false);
+  const [text, setText] = useState("");
 
   //Functions
   const handleAdd = async (e) => {
     e.preventDefault();
+    setLoader(true);
     if (data.name) {
       let isContain = false;
       departments.forEach((x) => {
@@ -27,61 +30,70 @@ const Departments = () => {
         setShowAddModal(false);
       }
     } else toast.error("All Fields are mandatory.");
+    setLoader(false);
   };
 
   const getAllDepartments = async () => {
+    setLoader(true);
     const val = await DepartmentService.read();
     setDepartments(val === null ? [] : Object.values(val));
+    setLoader(false);
   };
 
-  const handleChange = (text) => {
-    if (text === "") getAllDepartments();
-    else {
-      const val = [...departments];
-      console.log(val,text)
-      const updatedVal = [];
-      val.forEach(x=>{
-        if(x.name.toLowerCase().includes(text))updatedVal.push(x)
-      })
-      console.log(updatedVal)
-      setDepartments(updatedVal)
-    }
+  const handleChange = async () => {
+    setLoader(true);
+    const val = Object.values(await DepartmentService.read());
+    const updatedVal = [];
+    val.forEach((x) => {
+      if (x.name.toLowerCase().includes(text.toLowerCase())) updatedVal.push(x);
+    });
+    setDepartments(updatedVal);
+    setLoader(false);
   };
 
   useEffect(() => {
-    getAllDepartments();
-  }, [showAddModal]);
+    if (!showAddModal) {
+      if (text.length > 0) {
+        const timer = setTimeout(() => {
+          handleChange();
+        }, 500);
+        return () => clearTimeout(timer);
+      } else getAllDepartments();
+    }
+  }, [showAddModal, text]);
 
-  return departments === null ? (
-    <Loader size={50} />
-  ) : (
+  return (
     <>
       <div className="Departments">
         <div className="top">
-          <SearchBar onChange={(e) => handleChange(e.target.value)} />
+          <SearchBar onChange={(e) => setText(e.target.value)} />
           <button onClick={() => setShowAddModal(true)}>
             <FaPlusCircle />
             <h3>Add More</h3>
           </button>
         </div>
-        <div className="bottom">
-          {departments
-            .sort((a, b) => b.timeStamp - a.timeStamp)
-            .map((department, key) => (
-              <div className="department" key={key}>
-                <div className="header">
-                  <div className="content">
-                    <h3>{department?.name}</h3>
-                    <h5>{department?.employees?.length || 0} Members</h5>
+        {loader || departments === null ? (
+          <Loader size={50} fullHeight={true} fullWidth={true} />
+        ) : (
+          <div className="bottom">
+            {departments
+              .sort((a, b) => b.timeStamp - a.timeStamp)
+              .map((department, key) => (
+                <div className="department" key={key}>
+                  <div className="header">
+                    <div className="content">
+                      <h3>{department?.name}</h3>
+                      <h5>{department?.employees?.length || 0} Members</h5>
+                    </div>
+                    <h3>View All</h3>
                   </div>
-                  <h3>View All</h3>
+                  {department?.employees?.length === 0 ? (
+                    <div className="employees"></div>
+                  ) : null}
                 </div>
-                {department?.employees?.length === 0 ? (
-                  <div className="employees"></div>
-                ) : null}
-              </div>
-            ))}
-        </div>
+              ))}
+          </div>
+        )}
       </div>
       {showAddModal ? (
         <div className="modal">

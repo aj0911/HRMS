@@ -1,0 +1,96 @@
+.Employee {
+  width: 100%;
+  border: 1px solid var(--borderColor-1);
+  padding: 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 2rem;
+  border-radius: 10px;
+  .top {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    .btns {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 1rem;
+      button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        gap: 0.5rem;
+        color: #fff;
+        font-size: 1.1rem;
+        border-radius: 5px;
+        padding: 10px;
+        transition: var(--transition);
+        background-color: var(--secColor-1);
+        border: 1px solid var(--secColor-1);
+        h3 {
+          font-size: 0.9rem;
+          font-weight: 400;
+        }
+      }
+      button:last-child {
+        background-color: transparent;
+        border: 1px solid var(--borderColor-1);
+        color: var(--textColor-1);
+      }
+      button:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+}
+
+.emp.modal {
+  .add {
+    width: 75%;
+    .pages {
+        border-bottom: 1px solid var(--borderColor-1);
+        /* padding-bottom: 5px; */
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 100%;
+      gap: 1rem;
+      button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        padding: 7px 15px;
+        border: none;
+        border-bottom: 2px solid transparent;
+        padding-bottom: 5px;
+        color: var(--textColor-1);
+        background-color: transparent;
+        font-size: 0.9rem;
+        transition: var(--transition);
+        h3 {
+          font-weight: 500;
+        }
+      }
+      button.active {
+        color: var(--secColor-1);
+        border-bottom: 2px solid var(--secColor-1);
+      }
+    }
+    form {
+      .btns {
+        > input {
+          width: auto;
+        }
+        > .btns {
+          justify-content: flex-end;
+        }
+      }
+    }
+  }
+}
