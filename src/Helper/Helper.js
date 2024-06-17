@@ -90,3 +90,24 @@ export const greeting = () => {
 export const sendDesktopNotification = () => {
   
 };
+
+export const EMPLOYEE_TYPES = {
+  FULL_TIME_EMPLOYEES: 'Full-Time Employees',
+  PART_TIME_EMPLOYEES: 'Part-Time Employees',
+  CONTRACT_EMPLOYEES: 'Contract Employees',
+  TEMPORARY_EMPLOYEES: 'Temporary Employees',
+  INTERNS: 'Interns',
+  FREELANCERS_CONSULTANTS: 'Freelancers/Consultants',
+  REMOTE_EMPLOYEES: 'Remote Employees',
+  SEASONAL_EMPLOYEES: 'Seasonal Employees',
+  GIG_WORKERS: 'Gig Workers',
+  VOLUNTEERS: 'Volunteers'
+};
+
+export const OFFICE_LOCATIONS = {
+  BANGALORE:'Bangalore',
+  HYDERABAD:'Hyderabad',
+  NEW_DELHI:'New Delhi',
+  GURUGRAM:'Gurugram',
+  PUNE:'Pune'
+}

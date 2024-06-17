@@ -397,13 +397,14 @@
       width: 100%;
     }
     form {
+      margin-top: 1rem;
       display: flex;
       justify-content: flex-start;
       align-items: center;
       flex-direction: column;
       gap: 1rem;
       width: 100%;
-      input {
+      input,select {
         width: 100%;
         border: 1px solid var(--borderColor-1);
         border-radius: 5px;
@@ -414,10 +415,10 @@
         transition: var(--transition);
         background: transparent;
       }
-      input:placeholder-shown {
-        color: var(--textColor-2);
+      input:placeholder-shown,select.placeholder {
+        color: #757575;
       }
-      input:focus {
+      input:focus,select:focus {
         outline-width: 0;
       }
       input:-webkit-autofill,
@@ -441,10 +442,12 @@
           cursor: pointer;
         }
         input[type="submit"]{
+          border: 1px solid var(--secColor-1);
           background-color: var(--secColor-1);
           color: #fff;
         }
         input[type="submit"]:hover{
+          border: 1px solid var(--borderColor-1);
           background-color: transparent;
           color: var(--textColor-1);
         }
