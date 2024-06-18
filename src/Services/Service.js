@@ -7,6 +7,7 @@ export default class Service {
   static async create(entity, modelName) {
     try {
       const id = uid();
+      console.log(entity)
       const data = await set(ref(db, `${modelName}/${id}`), {
         ...entity,
         id,

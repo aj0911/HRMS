@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import Loader from "../../Components/Loader/Loader";
 
 const DragFiles = ({ children, className, acceptedFiles,value,onChange }) => {
   //states
@@ -56,8 +57,9 @@ const DragFiles = ({ children, className, acceptedFiles,value,onChange }) => {
         }
       }
     }
+    
   },[])
-
+  if(value && !showImgView.show) return <Loader size={50}/>
   return (
     <div className="DragFiles">
       <input

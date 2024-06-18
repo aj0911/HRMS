@@ -47,23 +47,26 @@ const Employees = () => {
   const [data, setData] = useState("");
 
   //Methods
-  const handleAddEmployee = (e) => {
+  const handleAddEmployee = async (e) => {
     e.preventDefault();
+    console.log(data);
     //Add Button Logic
     if (modalPage === pages.length - 1) {
-      console.log("mai chala");
+      (await EmployeeService.create(data))
+      toast.success('Employee Added Successfully.')
+      setShowAddModal(false)
+      setModalPage(0)
     }
     //Next Button Logic
     else {
-      console.log(data);
-      if (
+      const flag1 =
         modalPage === 0 &&
         validateForm(
           data.profile,
           data.first_name,
           data.last_name,
           data.mobile_number,
-          data.email_address,
+          data.email,
           data.dob,
           data.marital_status,
           data.gender,
@@ -72,10 +75,28 @@ const Employees = () => {
           data.city,
           data.state,
           data.zip_code
-        )
-      ) {
-        if (validateEmail(data.email_address)) setModalPage((prev) => prev + 1);
-        else toast.error("email must be like example@example.xyz");
+        );
+      const flag2 =
+        modalPage === 1 &&
+        validateForm(
+          data.empId,
+          data.user_name,
+          data.emp_type,
+          data.department,
+          data.designation,
+          data.joining_date,
+          data.office_location
+        );
+      if (flag1 || flag2 || modalPage === 2 || modalPage === 3) {
+        if (validateEmail(data.email)) {
+          if (modalPage === 1) {
+            if (!(await EmployeeService.checkUserNameExist(data.user_name)))
+              setModalPage((prev) => prev + 1);
+            else toast.error("Username already exist!!");
+          } else setModalPage((prev) => prev + 1);
+        } else {
+          toast.error("email must be like example@example.xyz");
+        }
       } else toast.error("All Fields are Mandatory.");
     }
   };
@@ -94,7 +115,7 @@ const Employees = () => {
   //Rendering
   useEffect(() => {
     getDepartments();
-    getEmpID()
+    getEmpID();
   }, []);
 
   if (showAddModal)
@@ -151,9 +172,9 @@ const Employees = () => {
                     />
                     <input
                       onChange={(e) =>
-                        setData({ ...data, email_address: e.target.value })
+                        setData({ ...data, email: e.target.value })
                       }
-                      value={data.email_address}
+                      value={data.email}
                       type="email"
                       placeholder="Email Address"
                     />
@@ -310,43 +331,92 @@ const Employees = () => {
                       readOnly
                       type="text"
                       placeholder="Employee ID"
-                      style={{backgroundColor:'var(--pannelHoverColor)'}}
+                      style={{ backgroundColor: "var(--pannelHoverColor)" }}
                     />
-                    <input type="text" placeholder="User Name" />
+                    <input
+                      type="text"
+                      placeholder="User Name"
+                      value={data.user_name}
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          user_name: e.target.value,
+                        })
+                      }
+                    />
                     <select
-                      className="placeholder"
+                      className={data.emp_type ? "" : "placeholder"}
                       onChange={(e) => {
                         if (e.target.value === "-1")
                           e.target.classList.add("placeholder");
                         else e.target.classList.remove("placeholder");
+                        setData({ ...data, emp_type: e.target.value });
                       }}
                     >
-                      <option value={-1}>Select Employee Type</option>
+                      <option
+                        selected={data.emp_type == "-1" ? true : false}
+                        value={-1}
+                      >
+                        Select Employee Type
+                      </option>
                       {Object.keys(EMPLOYEE_TYPES).map((type, key) => (
-                        <option key={key} value={EMPLOYEE_TYPES[type]}>
+                        <option
+                          selected={
+                            data.emp_type == EMPLOYEE_TYPES[type] ? true : false
+                          }
+                          key={key}
+                          value={EMPLOYEE_TYPES[type]}
+                        >
                           {EMPLOYEE_TYPES[type]}
                         </option>
                       ))}
                     </select>
                     <select
-                      className="placeholder"
+                      className={data.department ? "" : "placeholder"}
                       onChange={(e) => {
                         if (e.target.value === "-1")
                           e.target.classList.add("placeholder");
                         else e.target.classList.remove("placeholder");
+                        setData({ ...data, department: e.target.value });
                       }}
                     >
-                      <option value={-1}>Select Department</option>
+                      <option
+                        selected={data.department == "-1" ? true : false}
+                        value={-1}
+                      >
+                        Select Department
+                      </option>
                       {department.map((dep, key) => (
-                        <option key={key} value={dep.id}>
+                        <option
+                          selected={data.department == dep.id ? true : false}
+                          key={key}
+                          value={dep.id}
+                        >
                           {dep.name}
                         </option>
                       ))}
                     </select>
-                    <input type="text" placeholder="Enter Designation" />
+                    <input
+                      type="text"
+                      value={data.designation}
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          designation: e.target.value,
+                        })
+                      }
+                      placeholder="Enter Designation"
+                    />
                     <input
                       type="text"
                       placeholder="Select Joining Date"
+                      value={data.joining_date}
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          joining_date: e.target.value,
+                        })
+                      }
                       onFocus={(e) => {
                         e.target.type = "date";
                       }}
@@ -355,16 +425,32 @@ const Employees = () => {
                       }}
                     />
                     <select
-                      className="placeholder full-input"
+                      className={`${
+                        data.office_location ? "" : "placeholder"
+                      } full-input`}
                       onChange={(e) => {
                         if (e.target.value === "-1")
                           e.target.classList.add("placeholder");
                         else e.target.classList.remove("placeholder");
+                        setData({ ...data, office_location: e.target.value });
                       }}
                     >
-                      <option value={-1}>Select Office Location</option>
+                      <option
+                        selected={data.office_location == "-1" ? true : false}
+                        value={-1}
+                      >
+                        Select Office Location
+                      </option>
                       {Object.keys(OFFICE_LOCATIONS).map((location, key) => (
-                        <option key={key} value={OFFICE_LOCATIONS[location]}>
+                        <option
+                          selected={
+                            data.office_location == OFFICE_LOCATIONS[location]
+                              ? true
+                              : false
+                          }
+                          key={key}
+                          value={OFFICE_LOCATIONS[location]}
+                        >
                           {OFFICE_LOCATIONS[location]}
                         </option>
                       ))}
@@ -379,6 +465,10 @@ const Employees = () => {
                       <DragFiles
                         className={"fileDrag"}
                         acceptedFiles={["jpg", "png", "jpeg", "pdf"]}
+                        onChange={(file) =>
+                          setData({ ...data, appointment_letter: file })
+                        }
+                        value={data.appointment_letter}
                       >
                         <div className="icon">
                           <FaCloudArrowUp />
@@ -394,6 +484,10 @@ const Employees = () => {
                       <DragFiles
                         className={"fileDrag"}
                         acceptedFiles={["jpg", "png", "jpeg", "pdf"]}
+                        onChange={(file) =>
+                          setData({ ...data, salary_slips: file })
+                        }
+                        value={data.salary_slips}
                       >
                         <div className="icon">
                           <FaCloudArrowUp />
@@ -409,6 +503,10 @@ const Employees = () => {
                       <DragFiles
                         className={"fileDrag"}
                         acceptedFiles={["jpg", "png", "jpeg", "pdf"]}
+                        onChange={(file) =>
+                          setData({ ...data, reliving_letter: file })
+                        }
+                        value={data.reliving_letter}
                       >
                         <div className="icon">
                           <FaCloudArrowUp />
@@ -424,6 +522,10 @@ const Employees = () => {
                       <DragFiles
                         className={"fileDrag"}
                         acceptedFiles={["jpg", "png", "jpeg", "pdf"]}
+                        onChange={(file) =>
+                          setData({ ...data, experience_letter: file })
+                        }
+                        value={data.experience_letter}
                       >
                         <div className="icon">
                           <FaCloudArrowUp />
@@ -439,10 +541,50 @@ const Employees = () => {
               else if (modalPage >= 3)
                 return (
                   <>
-                    <input type="text" placeholder="Enter Linkedin ID" />
-                    <input type="text" placeholder="Enter Slack ID" />
-                    <input type="text" placeholder="Enter Skype ID" />
-                    <input type="text" placeholder="Enter Github ID" />
+                    <input
+                      type="text"
+                      value={data.linkedin_url}
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          linkedin_url: e.target.value,
+                        })
+                      }
+                      placeholder="Enter Linkedin ID"
+                    />
+                    <input
+                      type="text"
+                      value={data.slack_url}
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          slack_url: e.target.value,
+                        })
+                      }
+                      placeholder="Enter Slack ID"
+                    />
+                    <input
+                      type="text"
+                      value={data.skype_url}
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          skype_url: e.target.value,
+                        })
+                      }
+                      placeholder="Enter Skype ID"
+                    />
+                    <input
+                      type="text"
+                      value={data.github_url}
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          github_url: e.target.value,
+                        })
+                      }
+                      placeholder="Enter Github ID"
+                    />
                   </>
                 );
             })()}
@@ -461,6 +603,7 @@ const Employees = () => {
                   onClick={() => {
                     setShowAddModal(false);
                     setData("");
+                    setModalPage(0);
                   }}
                 />
                 <input

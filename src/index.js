@@ -25,7 +25,7 @@ const loadSuperAdmin = () => {
         email: process.env.REACT_APP_SUPERADMIN_EMAIL,
         pass: encryptData(process.env.REACT_APP_SUPERADMIN_PASSWORD),
         role: Roles.SUPER_ADMIN,
-        time: Date.now()
+        timeStamp: Date.now()
       });
 
       //Creating Settings for admin

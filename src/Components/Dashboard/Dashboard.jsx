@@ -192,7 +192,7 @@ const Dashboard = () => {
                 <img src={require("../../Assets/Images/user.png")} alt="" />
                 <div className="content">
                   <h3>{auth.user?.name}</h3>
-                  <h5>{auth.user?.department || "Admin"}</h5>
+                  <h5>{auth.user?.designation || "Admin"}</h5>
                 </div>
                 <FaChevronDown className="icon" />
               </div>
