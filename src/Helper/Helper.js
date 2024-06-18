@@ -111,3 +111,13 @@ export const OFFICE_LOCATIONS = {
   GURUGRAM:'Gurugram',
   PUNE:'Pune'
 }
+
+export const validateForm = (...formInputs)=>{
+  let isValid = true;
+  formInputs.forEach(x=>{
+    let flag = true;
+    if(x== -1 || x==='' || x===null || x===undefined)flag = false;
+    isValid &&= flag
+  })
+  return isValid;
+}

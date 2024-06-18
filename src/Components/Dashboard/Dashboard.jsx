@@ -47,7 +47,6 @@ const Dashboard = () => {
     navigate("/Auth");
   };
   const handleTheme = (mode) => {
-    console.log("on");
     //Dark Mode
     if (mode === MODES.DARK) {
       dispatch(toggleDarkMode());

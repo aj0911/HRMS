@@ -1,7 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 
-const DragFiles = ({ children, className, acceptedFiles }) => {
+const DragFiles = ({ children, className, acceptedFiles,value,onChange }) => {
   //states
   const inputRef = useRef();
   const [showImgView, setShowImgView] = useState({ val: null, show: false });
@@ -9,6 +9,8 @@ const DragFiles = ({ children, className, acceptedFiles }) => {
   //Methods
   const handleFileUpload = () => {
     const fileObj = inputRef.current.files && inputRef.current.files[0];
+    console.log(fileObj)
+    onChange(fileObj)
     if (!fileObj) {
       setShowImgView({ val: null, show: false });
       return;
@@ -17,19 +19,44 @@ const DragFiles = ({ children, className, acceptedFiles }) => {
     const regex = new RegExp("[^.]+$");
     const extension = fileName.match(regex).toString();
     if (acceptedFiles.includes(extension.toLowerCase())) {
-      const imgLink = URL.createObjectURL(fileObj);
-      setShowImgView({ val: imgLink, show: true });
+      if(extension==='pdf'){
+        setShowImgView({val:fileName,show:true,isPdf:true})
+      }
+      else{
+        const imgLink = URL.createObjectURL(fileObj);
+        setShowImgView({ val: imgLink, show: true,isPdf:false });
+      }
     } else {
       toast.error(`Only ${acceptedFiles.toString()} files are allowed.`);
       setShowImgView({ val: null, show: false });
     }
   };
   const handleFileDrop = (e) => {
-    console.log(e)
     e.preventDefault();
     inputRef.current.files = e.dataTransfer.files;
     handleFileUpload();
   };
+
+  useEffect(()=>{
+    if(value){
+      const fileObj = value;
+      if (!fileObj) {
+        setShowImgView({ val: null, show: false });
+      }
+      else{
+        const fileName = fileObj.name;
+        const regex = new RegExp("[^.]+$");
+        const extension = fileName.match(regex).toString();
+        if(extension==='pdf'){
+          setShowImgView({val:fileName,show:true,isPdf:true})
+        }
+        else{
+          const imgLink = URL.createObjectURL(fileObj);
+          setShowImgView({ val: imgLink, show: true,isPdf:false });
+        }
+      }
+    }
+  },[])
 
   return (
     <div className="DragFiles">
@@ -37,21 +64,26 @@ const DragFiles = ({ children, className, acceptedFiles }) => {
         onChange={handleFileUpload}
         ref={inputRef}
         type="file"
-        name="drag-file-input"
         hidden
       />
-      <form
+      <div
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => handleFileDrop(e)}
         onClick={() => inputRef.current.click()}
         className={className}
       >
         {showImgView.show ? (
+          showImgView.isPdf?
+          <div className="pdfView">
+            <img src={require('../../Assets/Images/pdf.png')} alt="" />
+            <h3>{showImgView.val}</h3>
+          </div>
+          :
           <img src={showImgView.val} alt="Uploaded File" />
         ) : (
           children
         )}
-      </form>
+      </div>
     </div>
   );
 };

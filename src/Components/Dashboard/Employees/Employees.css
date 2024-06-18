@@ -51,6 +51,7 @@
 
 .emp.modal {
   .add {
+    min-height: 90%;
     width: 75%;
     .pages {
         border-bottom: 1px solid var(--borderColor-1);
@@ -83,8 +84,79 @@
       }
     }
     form {
+      flex: 1;
       flex-direction: row;
       flex-wrap: wrap;
+      .upload{
+        width: calc(50% - .5rem);
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: .5rem;
+        flex-direction: column;
+        >h3{
+          font-size: .9rem;
+          font-weight: 400;
+          color: var(--textColor-1);
+        }
+        .DragFiles{
+          width: 100%;
+          .fileDrag{
+            width: 100%;
+            border: 2px dotted var(--secColor-1);
+            padding: 20px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: .5rem;
+            >img{
+              width: 100%;
+              height: 150px;
+            }
+            .pdfView{
+              display:flex;
+              justify-content: center;
+              align-items: center;
+              flex-direction: column;
+              gap: .5rem;
+              width: 100%;
+              img{
+                width: 50px;
+              }
+              h3{
+                font-size: .9rem;
+                font-weight: 300;
+                color: var(--textColor-1);
+              }
+            }
+            .icon{
+              font-size: 1.4rem;
+              color: #fff;
+              background-color: var(--secColor-1);
+              padding: 10px;
+              border-radius: 5px;
+            }
+            h3{
+              font-size: .9rem;
+              font-weight: 400;
+              color: var(--textColor-1);
+              span{
+                color: var(--secColor-1);
+              }
+            }
+            h5{
+              font-size: .9rem;
+              font-weight: 400;
+              color: var(--textColor-1);
+              span{
+                color: var(--secColor-1);
+              }
+            }
+          }
+        }
+      }
       >input,select{
         width: calc(50% - .5rem);
         option{
@@ -94,7 +166,7 @@
           transition: var(--transition);
         }
       }
-      .DragFiles{
+      >.DragFiles{
         width: 100%;
         .drag{
           width: 100px;

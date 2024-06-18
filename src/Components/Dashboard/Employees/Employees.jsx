@@ -7,9 +7,17 @@ import { MdMail } from "react-icons/md";
 import { IoIosLock } from "react-icons/io";
 import countryList from "react-select-country-list";
 import DragFiles from "../../../Helper/DragFiles/DragFiles";
-import { EMPLOYEE_TYPES, OFFICE_LOCATIONS } from "../../../Helper/Helper";
+import {
+  EMPLOYEE_TYPES,
+  OFFICE_LOCATIONS,
+  validateEmail,
+  validateForm,
+} from "../../../Helper/Helper";
 import DepartmentService from "../../../Services/DepartmentService";
 import Loader from "../../Loader/Loader";
+import { FaCloudArrowUp } from "react-icons/fa6";
+import toast from "react-hot-toast";
+import EmployeeService from "../../../Services/EmployeeService";
 
 const Employees = () => {
   //States
@@ -36,12 +44,39 @@ const Employees = () => {
   const countryOptions = useMemo(() => countryList().getData(), []);
   const [loader, setLoader] = useState(false);
   const [department, setDepartment] = useState("");
+  const [data, setData] = useState("");
 
   //Methods
   const handleAddEmployee = (e) => {
     e.preventDefault();
-    if (modalPage === pages.length) {
+    //Add Button Logic
+    if (modalPage === pages.length - 1) {
       console.log("mai chala");
+    }
+    //Next Button Logic
+    else {
+      console.log(data);
+      if (
+        modalPage === 0 &&
+        validateForm(
+          data.profile,
+          data.first_name,
+          data.last_name,
+          data.mobile_number,
+          data.email_address,
+          data.dob,
+          data.marital_status,
+          data.gender,
+          data.country,
+          data.address,
+          data.city,
+          data.state,
+          data.zip_code
+        )
+      ) {
+        if (validateEmail(data.email_address)) setModalPage((prev) => prev + 1);
+        else toast.error("email must be like example@example.xyz");
+      } else toast.error("All Fields are Mandatory.");
     }
   };
   const getDepartments = async () => {
@@ -50,10 +85,17 @@ const Employees = () => {
     setLoader(false);
   };
 
+  const getEmpID = async () => {
+    setLoader(true);
+    setData({ ...data, empId: `#EMP-${await EmployeeService.getNewEmpID()}` });
+    setLoader(false);
+  };
+
   //Rendering
-  useEffect(()=>{
-    getDepartments()
-  },[])
+  useEffect(() => {
+    getDepartments();
+    getEmpID()
+  }, []);
 
   if (showAddModal)
     return (
@@ -78,59 +120,146 @@ const Employees = () => {
                     <DragFiles
                       className={"drag"}
                       acceptedFiles={["jpg", "png", "jpeg"]}
+                      onChange={(file) => setData({ ...data, profile: file })}
+                      value={data.profile}
                     >
                       <FaCamera />
                     </DragFiles>
-                    <input type="text" placeholder="First Name" />
-                    <input type="text" placeholder="Last Name" />
-                    <input type="tel" placeholder="Mobile Number" />
-                    <input type="email" placeholder="Email Address" />
+                    <input
+                      onChange={(e) =>
+                        setData({ ...data, first_name: e.target.value })
+                      }
+                      value={data.first_name}
+                      type="text"
+                      placeholder="First Name"
+                    />
+                    <input
+                      onChange={(e) =>
+                        setData({ ...data, last_name: e.target.value })
+                      }
+                      type="text"
+                      placeholder="Last Name"
+                      value={data.last_name}
+                    />
+                    <input
+                      onChange={(e) =>
+                        setData({ ...data, mobile_number: e.target.value })
+                      }
+                      value={data.mobile_number}
+                      type="tel"
+                      placeholder="Mobile Number"
+                    />
+                    <input
+                      onChange={(e) =>
+                        setData({ ...data, email_address: e.target.value })
+                      }
+                      value={data.email_address}
+                      type="email"
+                      placeholder="Email Address"
+                    />
                     <input
                       type="text"
                       placeholder="Date of Birth"
+                      value={data.dob}
                       onFocus={(e) => {
                         e.target.type = "date";
                       }}
                       onBlur={(e) => {
                         if (e.target.value == "") e.target.type = "text";
                       }}
+                      onChange={(e) =>
+                        setData({ ...data, dob: e.target.value })
+                      }
                     />
                     <select
-                      className="placeholder"
+                      className={data.marital_status ? "" : "placeholder"}
                       onChange={(e) => {
                         if (e.target.value === "-1")
                           e.target.classList.add("placeholder");
                         else e.target.classList.remove("placeholder");
+                        setData({ ...data, marital_status: e.target.value });
                       }}
                     >
-                      <option value={-1}>Marital Status</option>
-                      <option value="Married">Married</option>
-                      <option value="Unmarried">Unmarried</option>☻
+                      <option
+                        selected={data.marital_status == "-1" ? true : false}
+                        value={-1}
+                      >
+                        Marital Status
+                      </option>
+                      <option
+                        selected={
+                          data.marital_status == "Married" ? true : false
+                        }
+                        value="Married"
+                      >
+                        Married
+                      </option>
+                      <option
+                        selected={
+                          data.marital_status == "Unmarried" ? true : false
+                        }
+                        value="Unmarried"
+                      >
+                        Unmarried
+                      </option>
                     </select>
                     <select
-                      className="placeholder"
+                      className={data.gender ? "" : "placeholder"}
                       onChange={(e) => {
                         if (e.target.value === "-1")
                           e.target.classList.add("placeholder");
                         else e.target.classList.remove("placeholder");
+                        setData({ ...data, gender: e.target.value });
                       }}
                     >
-                      <option value={-1}>Gender</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                      <option value="Other">Other</option>
+                      <option
+                        selected={data.gender == "-1" ? true : false}
+                        value={-1}
+                      >
+                        Gender
+                      </option>
+                      <option
+                        selected={data.gender == "Male" ? true : false}
+                        value="Male"
+                      >
+                        Male
+                      </option>
+                      <option
+                        selected={data.gender == "Female" ? true : false}
+                        value="Female"
+                      >
+                        Female
+                      </option>
+                      <option
+                        selected={data.gender == "Other" ? true : false}
+                        value="Other"
+                      >
+                        Other
+                      </option>
                     </select>
                     <select
-                      className="placeholder"
+                      className={data.country ? "" : "placeholder"}
                       onChange={(e) => {
                         if (e.target.value === "-1")
                           e.target.classList.add("placeholder");
                         else e.target.classList.remove("placeholder");
+                        setData({ ...data, country: e.target.value });
                       }}
                     >
-                      <option value={-1}>Country</option>
+                      <option
+                        selected={data.country == "-1" ? true : false}
+                        value={-1}
+                      >
+                        Country
+                      </option>
                       {countryOptions.map((country, key) => (
-                        <option key={key} value={country.label}>
+                        <option
+                          selected={
+                            data.country == country.label ? true : false
+                          }
+                          key={key}
+                          value={country.label}
+                        >
                           {country.label}
                         </option>
                       ))}
@@ -139,28 +268,50 @@ const Employees = () => {
                       type="text"
                       className="full-input"
                       placeholder="Address"
+                      value={data.address}
+                      onChange={(e) =>
+                        setData({ ...data, address: e.target.value })
+                      }
                     />
                     <input
                       type="text"
                       className="one-third-input"
                       placeholder="City"
+                      value={data.city}
+                      onChange={(e) =>
+                        setData({ ...data, city: e.target.value })
+                      }
                     />
                     <input
                       type="text"
                       className="one-third-input"
                       placeholder="State"
+                      value={data.state}
+                      onChange={(e) =>
+                        setData({ ...data, state: e.target.value })
+                      }
                     />
                     <input
                       type="text"
                       className="one-third-input"
                       placeholder="Zip Code"
+                      value={data.zip_code}
+                      onChange={(e) =>
+                        setData({ ...data, zip_code: e.target.value })
+                      }
                     />
                   </>
                 );
               else if (modalPage === 1)
                 return (
                   <>
-                    <input type="text" placeholder="Employee ID" />
+                    <input
+                      value={data.empId}
+                      readOnly
+                      type="text"
+                      placeholder="Employee ID"
+                      style={{backgroundColor:'var(--pannelHoverColor)'}}
+                    />
                     <input type="text" placeholder="User Name" />
                     <select
                       className="placeholder"
@@ -220,14 +371,80 @@ const Employees = () => {
                     </select>
                   </>
                 );
-              else if(modalPage>=3)
+              else if (modalPage === 2)
                 return (
-              <>
-                <input type="text" placeholder="Enter Linkedin ID" />
-                <input type="text" placeholder="Enter Slack ID" />
-                <input type="text" placeholder="Enter Skype ID" />
-                <input type="text" placeholder="Enter Github ID" />
-              </>)
+                  <>
+                    <div className="upload">
+                      <h3>Upload Appointment Letter</h3>
+                      <DragFiles
+                        className={"fileDrag"}
+                        acceptedFiles={["jpg", "png", "jpeg", "pdf"]}
+                      >
+                        <div className="icon">
+                          <FaCloudArrowUp />
+                        </div>
+                        <h3>
+                          Drag & Drop or <span>choose file</span> to upload
+                        </h3>
+                        <h5>Supported formats : Jpg, Png, Jpeg, pdf</h5>
+                      </DragFiles>
+                    </div>
+                    <div className="upload">
+                      <h3>Upload Salary Slips</h3>
+                      <DragFiles
+                        className={"fileDrag"}
+                        acceptedFiles={["jpg", "png", "jpeg", "pdf"]}
+                      >
+                        <div className="icon">
+                          <FaCloudArrowUp />
+                        </div>
+                        <h3>
+                          Drag & Drop or <span>choose file</span> to upload
+                        </h3>
+                        <h5>Supported formats : Jpg, Png, Jpeg, pdf</h5>
+                      </DragFiles>
+                    </div>
+                    <div className="upload">
+                      <h3>Upload Reliving Letter</h3>
+                      <DragFiles
+                        className={"fileDrag"}
+                        acceptedFiles={["jpg", "png", "jpeg", "pdf"]}
+                      >
+                        <div className="icon">
+                          <FaCloudArrowUp />
+                        </div>
+                        <h3>
+                          Drag & Drop or <span>choose file</span> to upload
+                        </h3>
+                        <h5>Supported formats : Jpg, Png, Jpeg, pdf</h5>
+                      </DragFiles>
+                    </div>
+                    <div className="upload">
+                      <h3>Upload Experience Letter</h3>
+                      <DragFiles
+                        className={"fileDrag"}
+                        acceptedFiles={["jpg", "png", "jpeg", "pdf"]}
+                      >
+                        <div className="icon">
+                          <FaCloudArrowUp />
+                        </div>
+                        <h3>
+                          Drag & Drop or <span>choose file</span> to upload
+                        </h3>
+                        <h5>Supported formats : Jpg, Png, Jpeg, pdf</h5>
+                      </DragFiles>
+                    </div>
+                  </>
+                );
+              else if (modalPage >= 3)
+                return (
+                  <>
+                    <input type="text" placeholder="Enter Linkedin ID" />
+                    <input type="text" placeholder="Enter Slack ID" />
+                    <input type="text" placeholder="Enter Skype ID" />
+                    <input type="text" placeholder="Enter Github ID" />
+                  </>
+                );
             })()}
             <div className="btns">
               {modalPage > 0 ? (
@@ -241,15 +458,14 @@ const Employees = () => {
                 <input
                   type="button"
                   value="Cancel"
-                  onClick={() => setShowAddModal(false)}
+                  onClick={() => {
+                    setShowAddModal(false);
+                    setData("");
+                  }}
                 />
                 <input
                   type="submit"
                   value={modalPage < pages.length - 1 ? "Next" : "Add"}
-                  onClick={() => {
-                    if (modalPage === pages.length) setModalPage(3);
-                    else setModalPage((prev) => prev + 1);
-                  }}
                 />
               </div>
             </div>
