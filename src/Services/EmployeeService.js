@@ -1,17 +1,23 @@
-import { Roles, encryptData } from "../Helper/Helper";
+import { Roles, encryptData, uploadFile } from "../Helper/Helper";
 import Service from "./Service";
 
 export default class EmployeeService extends Service {
   static async create(entity) {
     const pass = encryptData(`${entity.user_name}@1234`);
-    return super.create(
+    entity.profile = await uploadFile(entity.profile);
+    entity.appointment_letter = await uploadFile(entity.appointment_letter);
+    entity.salary_slips = await uploadFile(entity.salary_slips);
+    entity.reliving_letter = await uploadFile(entity.reliving_letter);
+    entity.experience_letter = await uploadFile(entity.experience_letter);
+    return await super.create(
       {
         ...entity,
         pass,
         role: Roles.USER,
         name: `${entity.first_name} ${entity.last_name}`,
       },
-      "users"
+      "users",
+      true
     );
   }
 

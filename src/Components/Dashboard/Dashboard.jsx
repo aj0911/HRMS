@@ -39,7 +39,7 @@ const Dashboard = () => {
   const [viewOptions, setViewOptions] = useState(false);
   const dispatch = useDispatch();
   const [component, setComponent] = useState(0);
-  const [active,setActive] = useState(false);
+  const [active, setActive] = useState(false);
 
   //handling Functions
   const handleLogout = () => {
@@ -135,7 +135,7 @@ const Dashboard = () => {
   return (
     <>
       <div className={`Dashboard`}>
-        <div className={`left ${active?'active':''}`}>
+        <div className={`left ${active ? "active" : ""}`}>
           <div className="logo">
             <img src={require("../../Assets/Images/logo.png")} alt="" />
             <h1>HRMS</h1>
@@ -144,7 +144,10 @@ const Dashboard = () => {
             {menus.map((menu, key) => (
               <button
                 className={key === component ? "active" : ""}
-                onClick={() => {setComponent(key);setActive(false)}}
+                onClick={() => {
+                  setComponent(key);
+                  setActive(false);
+                }}
                 key={key}
               >
                 {menu.icon}
@@ -172,7 +175,7 @@ const Dashboard = () => {
         <div className="right">
           <div className="header">
             <div className="left">
-              <div className="menu" onClick={()=>setActive(prev=>!prev)}>
+              <div className="menu" onClick={() => setActive((prev) => !prev)}>
                 <div className="bar"></div>
               </div>
               <div className="heading">
@@ -189,7 +192,13 @@ const Dashboard = () => {
                 <AiOutlineBell />
               </div>
               <div onClick={() => setViewOptions(true)} className="profile">
-                <img src={require("../../Assets/Images/user.png")} alt="" />
+                <img
+                  src={
+                    auth.user?.profile ||
+                    require("../../Assets/Images/user.png")
+                  }
+                  alt=""
+                />
                 <div className="content">
                   <h3>{auth.user?.name}</h3>
                   <h5>{auth.user?.designation || "Admin"}</h5>

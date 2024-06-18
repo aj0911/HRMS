@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { onValue, ref, set } from 'firebase/database';
 import { db } from './firebase';
 import { uid } from 'uid';
-import { MODES, Roles, encryptData } from './Helper/Helper';
+import { Roles, encryptData } from './Helper/Helper';
 import { Provider } from "react-redux"
 import store from "./store.js"
 import { PersistGate } from "redux-persist/integration/react"

@@ -4,15 +4,25 @@ import { uid } from "uid";
 
 export default class Service {
   //Create one only
-  static async create(entity, modelName) {
+  static async create(entity, modelName, createSetting = false) {
     try {
       const id = uid();
-      console.log(entity)
       const data = await set(ref(db, `${modelName}/${id}`), {
         ...entity,
         id,
         timeStamp: Date.now(),
       });
+      if (createSetting) {
+        const settingId = uid();
+        await set(ref(db, `${'settings'}/${settingId}`), {
+          user: id,
+          mobile_notify: false,
+          desktop_notify: false,
+          email_notify: true,
+          id: settingId,
+          timeStamp: Date.now(),
+        });
+      }
       return data;
     } catch (error) {
       return {

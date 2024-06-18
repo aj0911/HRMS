@@ -2,7 +2,7 @@ import Service from "./Service";
 
 export default class DepartmentService extends Service {
     static async create(entity) {
-        return super.create({...entity,employees:[]}, 'departments')
+        return super.create(entity, 'departments')
     }
 
     static async read(id = '') {

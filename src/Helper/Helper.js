@@ -1,5 +1,7 @@
 import emailjs from "@emailjs/browser";
 import bcrypt from "bcryptjs";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage } from "../firebase";
 
 export const Constants = {
   LOGIN: "LOGIN",
@@ -87,37 +89,76 @@ export const greeting = () => {
   return greets[2];
 };
 
-export const sendDesktopNotification = () => {
-  
-};
+export const sendDesktopNotification = () => {};
 
 export const EMPLOYEE_TYPES = {
-  FULL_TIME_EMPLOYEES: 'Full-Time Employees',
-  PART_TIME_EMPLOYEES: 'Part-Time Employees',
-  CONTRACT_EMPLOYEES: 'Contract Employees',
-  TEMPORARY_EMPLOYEES: 'Temporary Employees',
-  INTERNS: 'Interns',
-  FREELANCERS_CONSULTANTS: 'Freelancers/Consultants',
-  REMOTE_EMPLOYEES: 'Remote Employees',
-  SEASONAL_EMPLOYEES: 'Seasonal Employees',
-  GIG_WORKERS: 'Gig Workers',
-  VOLUNTEERS: 'Volunteers'
+  FULL_TIME_EMPLOYEES: "Full-Time Employees",
+  PART_TIME_EMPLOYEES: "Part-Time Employees",
+  CONTRACT_EMPLOYEES: "Contract Employees",
+  TEMPORARY_EMPLOYEES: "Temporary Employees",
+  INTERNS: "Interns",
+  FREELANCERS_CONSULTANTS: "Freelancers/Consultants",
+  REMOTE_EMPLOYEES: "Remote Employees",
+  SEASONAL_EMPLOYEES: "Seasonal Employees",
+  GIG_WORKERS: "Gig Workers",
+  VOLUNTEERS: "Volunteers",
 };
 
 export const OFFICE_LOCATIONS = {
-  BANGALORE:'Bangalore',
-  HYDERABAD:'Hyderabad',
-  NEW_DELHI:'New Delhi',
-  GURUGRAM:'Gurugram',
-  PUNE:'Pune'
-}
+  BANGALORE: "Bangalore",
+  HYDERABAD: "Hyderabad",
+  NEW_DELHI: "New Delhi",
+  GURUGRAM: "Gurugram",
+  PUNE: "Pune",
+};
 
-export const validateForm = (...formInputs)=>{
+export const validateForm = (...formInputs) => {
   let isValid = true;
-  formInputs.forEach(x=>{
+  formInputs.forEach((x) => {
     let flag = true;
-    if(x== -1 || x==='' || x===null || x===undefined)flag = false;
-    isValid &&= flag
-  })
+    if (x == -1 || x === "" || x === null || x === undefined) flag = false;
+    isValid &&= flag;
+  });
   return isValid;
-}
+};
+
+export const uploadFile = async (file) => {
+  if (file) {
+    try {
+      const fileName = new Date().getTime() + file.name;
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      const uploadTaskSnapshot = await new Promise((resolve, reject) => {
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            switch (snapshot.state) {
+              case "paused":
+                console.log("Upload is paused");
+                break;
+              case "running":
+                console.log("Upload is running");
+                break;
+              default:
+                break;
+            }
+          },
+          (error) => {
+            reject(error);
+          },
+          () => {
+            resolve(uploadTask.snapshot);
+          }
+        );
+      });
+
+      const downloadURL = await getDownloadURL(uploadTaskSnapshot.ref);
+      return downloadURL;
+
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+  return null;
+};
+
