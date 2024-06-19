@@ -1,4 +1,5 @@
 import { Roles, encryptData, uploadFile } from "../Helper/Helper";
+import DepartmentService from "./DepartmentService";
 import Service from "./Service";
 
 export default class EmployeeService extends Service {
@@ -46,9 +47,44 @@ export default class EmployeeService extends Service {
 
   static async checkUserNameExist(userName) {
     const all_users = await super.read("", "users");
+    let userExists = false;
+
     Object.values(all_users).forEach((x) => {
-      if (x.user_name === userName) return true;
+      if (x.user_name === userName) {
+        userExists = true;
+        return; // This return will exit the forEach loop iteration but not the outer function
+      }
     });
-    return false;
+
+    return userExists;
+  }
+  static async checkEmailExist(email) {
+    const all_users = await super.read("", "users");
+    let userExists = false;
+
+    Object.values(all_users).forEach((x) => {
+      if (x.email === email) {
+        userExists = true;
+        return; 
+      }
+    });
+
+    return userExists;
+  }
+  static async getAllEmployees() {
+    const all_users = await super.read("", "users");
+    const arr = [];
+
+    const users = Object.values(all_users).filter((x) => x.role === Roles.USER);
+
+    const departmentPromises = users.map((x) =>
+      DepartmentService.read(x.department).then((department) => ({
+        ...x,
+        department: department?.name,
+      }))
+    );
+
+    const result = await Promise.all(departmentPromises);
+    return result;
   }
 }

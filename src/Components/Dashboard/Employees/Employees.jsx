@@ -1,7 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./Employees.css";
 import SearchBar from "../../../Helper/SearchBar/SearchBar";
-import { FaBriefcase, FaCamera, FaPlusCircle, FaUser } from "react-icons/fa";
+import {
+  FaAngleLeft,
+  FaAngleRight,
+  FaBriefcase,
+  FaCamera,
+  FaEye,
+  FaPlusCircle,
+  FaTrashAlt,
+  FaUser,
+} from "react-icons/fa";
 import { VscSettings } from "react-icons/vsc";
 import { MdMail } from "react-icons/md";
 import { IoIosLock } from "react-icons/io";
@@ -15,7 +24,7 @@ import {
 } from "../../../Helper/Helper";
 import DepartmentService from "../../../Services/DepartmentService";
 import Loader from "../../Loader/Loader";
-import { FaCloudArrowUp } from "react-icons/fa6";
+import { FaCloudArrowUp, FaPencil } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import EmployeeService from "../../../Services/EmployeeService";
 
@@ -45,6 +54,10 @@ const Employees = () => {
   const [loader, setLoader] = useState(false);
   const [department, setDepartment] = useState("");
   const [data, setData] = useState("");
+  const [employees, setEmployees] = useState("");
+  const [page, setPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [maxPage, setMaxPage] = useState("");
 
   //Methods
   const handleAddEmployee = async (e) => {
@@ -56,6 +69,7 @@ const Employees = () => {
       const res = await EmployeeService.create(data);
       console.log(res);
       toast.success("Employee Added Successfully.");
+      setData("");
       setShowAddModal(false);
       setModalPage(0);
     }
@@ -95,6 +109,10 @@ const Employees = () => {
             if (!(await EmployeeService.checkUserNameExist(data.user_name)))
               setModalPage((prev) => prev + 1);
             else toast.error("Username already exist!!");
+          } else if (modalPage === 0) {
+            if (!(await EmployeeService.checkEmailExist(data.email)))
+              setModalPage((prev) => prev + 1);
+            else toast.error("Email already exist!!");
           } else setModalPage((prev) => prev + 1);
         } else {
           toast.error("email must be like example@example.xyz");
@@ -115,7 +133,35 @@ const Employees = () => {
     setLoader(false);
   };
 
+  const getEmployees = async () => {
+    setLoader(true);
+    const val = await EmployeeService.getAllEmployees();
+    setEmployees(val);
+    const perPage = val.length / itemsPerPage;
+    setMaxPage(
+      Math.floor(perPage) === perPage ? perPage : Math.floor(perPage) + 1
+    );
+    setPage(1)//first page
+    setLoader(false);
+  };
+
+  const handleChangePageItem = (e) => {
+    setPage(1); //Starting from first page
+    const val = Number(e.target.value);
+    setItemsPerPage(val);
+    const perPage = employees.length / val;
+    setMaxPage(
+      Math.floor(perPage) === perPage ? perPage : Math.floor(perPage) + 1
+    );
+  };
+
   //Rendering
+  useEffect(() => {
+    if (!showAddModal) {
+      getEmployees();
+    }
+  }, [showAddModal]);
+
   useEffect(() => {
     getDepartments();
     getEmpID();
@@ -643,6 +689,77 @@ const Employees = () => {
             </button>
           </div>
         </div>
+        {employees === "" ? (
+          <Loader size={50} fullHeight={true} fullWidth={true} />
+        ) : (
+          <div className="bottom">
+            <table>
+              <thead>
+                <tr>
+                  <td>Employee Name</td>
+                  <td>Employee ID</td>
+                  <td>Department</td>
+                  <td>Designation</td>
+                  <td>Location</td>
+                  <td>Type</td>
+                  <td>Action</td>
+                </tr>
+              </thead>
+              <tbody>
+                {employees
+                  .slice((page - 1) * itemsPerPage, page * itemsPerPage)
+                  .map((emp, key) => (
+                    <tr key={key}>
+                      <td>
+                        <div className="table-box">
+                          <img src={emp.profile} alt="" />
+                          <h3>{emp.name}</h3>
+                        </div>
+                      </td>
+                      <td>{emp.empId}</td>
+                      <td>{emp.department}</td>
+                      <td>{emp.designation}</td>
+                      <td>{emp.office_location}</td>
+                      <td>{emp.emp_type}</td>
+                      <td>
+                        <div className="table-box">
+                          <FaEye />
+                          <FaPencil />
+                          <FaTrashAlt />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+            <div className="pagination">
+              <div className="item-count">
+                <h3>Showing</h3>
+                <select onChange={(e) => handleChangePageItem(e)}>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="25">25</option>
+                </select>
+              </div>
+              <p>
+                Showing {(page - 1) * itemsPerPage + 1} to{" "}
+                {page * itemsPerPage > employees.length
+                  ? employees.length
+                  : page * itemsPerPage}{" "}
+                out of {employees.length} records
+              </p>
+              <div className="paging">
+                {page <= 1 ? null : (
+                  <FaAngleLeft onClick={() => setPage(page - 1)} />
+                )}
+                <h3>{page}</h3>
+                {page >= maxPage ? null : (
+                  <FaAngleRight onClick={() => setPage(page + 1)} />
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
 };
