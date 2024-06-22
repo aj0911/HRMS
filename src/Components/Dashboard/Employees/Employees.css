@@ -47,6 +47,17 @@
       }
     }
   }
+  .top.filter-box{
+    justify-content: flex-end;
+  }
+  .bottom{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+    flex-direction: column;
+    gap:1rem;
+  }
 }
 
 .emp.modal {

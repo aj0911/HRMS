@@ -9,6 +9,7 @@
   border-radius: 5px;
   padding: 10px;
   input {
+    width: 100%;
     border: none;
     font-size: 0.9rem;
     color: var(--textColor-1);

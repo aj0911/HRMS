@@ -12,7 +12,7 @@ import {
   FaUser,
 } from "react-icons/fa";
 import { VscSettings } from "react-icons/vsc";
-import { MdMail } from "react-icons/md";
+import { MdMail, MdOutlineClear } from "react-icons/md";
 import { IoIosLock } from "react-icons/io";
 import countryList from "react-select-country-list";
 import DragFiles from "../../../Helper/DragFiles/DragFiles";
@@ -27,11 +27,16 @@ import Loader from "../../Loader/Loader";
 import { FaCloudArrowUp, FaPencil } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import EmployeeService from "../../../Services/EmployeeService";
+import CheckBox from "../../../Helper/CheckBox/CheckBox";
+import RadioButton from "../../../Helper/RadioButton/RadioButton";
 
 const Employees = () => {
   //States
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [modalPage, setModalPage] = useState(0);
+  const [selectedEmployee, setSelectedEmployee] = useState("");
   const pages = [
     {
       name: "Personal Information",
@@ -58,6 +63,13 @@ const Employees = () => {
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [maxPage, setMaxPage] = useState("");
+  const [search, setSearch] = useState("");
+  const [filterData, setFilterData] = useState({
+    searchEmpText: "",
+    empDepArr: [],
+    empTypeArr: [],
+  });
+  const [showFilterModal, setShowFilterModal] = useState(false);
 
   //Methods
   const handleAddEmployee = async (e) => {
@@ -121,9 +133,87 @@ const Employees = () => {
     }
     setLoader(false);
   };
+  const handleUpdateEmployee = async (e) => {
+    e.preventDefault();
+    console.log(selectedEmployee);
+    //Edit Button Logic
+    setLoader(true);
+    if (modalPage === pages.length - 1) {
+      const res = await EmployeeService.update(selectedEmployee.id, {
+        ...selectedEmployee,
+        original_email: null,
+        original_user_name: null,
+      });
+      console.log(res);
+      toast.success("Employee Updated Successfully.");
+      setSelectedEmployee("");
+      setShowUpdateModal(false);
+      setModalPage(0);
+    }
+    //Next Button Logic
+    else {
+      const flag1 =
+        modalPage === 0 &&
+        validateForm(
+          selectedEmployee.profile,
+          selectedEmployee.first_name,
+          selectedEmployee.last_name,
+          selectedEmployee.mobile_number,
+          selectedEmployee.email,
+          selectedEmployee.dob,
+          selectedEmployee.marital_status,
+          selectedEmployee.gender,
+          selectedEmployee.country,
+          selectedEmployee.address,
+          selectedEmployee.city,
+          selectedEmployee.state,
+          selectedEmployee.zip_code
+        );
+      const flag2 =
+        modalPage === 1 &&
+        validateForm(
+          selectedEmployee.empId,
+          selectedEmployee.user_name,
+          selectedEmployee.emp_type,
+          selectedEmployee.department,
+          selectedEmployee.designation,
+          selectedEmployee.joining_date,
+          selectedEmployee.office_location
+        );
+      if (flag1 || flag2 || modalPage === 2 || modalPage === 3) {
+        if (validateEmail(selectedEmployee.email)) {
+          if (modalPage === 1) {
+            if (
+              !(await EmployeeService.checkUserNameExist(
+                selectedEmployee.user_name
+              )) ||
+              selectedEmployee.user_name === selectedEmployee.original_user_name
+            )
+              setModalPage((prev) => prev + 1);
+            else toast.error("Username already exist!!");
+          } else if (modalPage === 0) {
+            if (
+              !(await EmployeeService.checkEmailExist(
+                selectedEmployee.email
+              )) ||
+              selectedEmployee.email === selectedEmployee.original_email
+            )
+              setModalPage((prev) => prev + 1);
+            else toast.error("Email already exist!!");
+          } else setModalPage((prev) => prev + 1);
+        } else {
+          toast.error("email must be like example@example.xyz");
+        }
+      } else toast.error("All Fields are Mandatory.");
+    }
+    setLoader(false);
+  };
   const getDepartments = async () => {
     setLoader(true);
-    setDepartment(Object.values(await DepartmentService.read()));
+    const res = await DepartmentService.read();
+    if (res) {
+      setDepartment(Object.values(res));
+    }
     setLoader(false);
   };
 
@@ -141,7 +231,7 @@ const Employees = () => {
     setMaxPage(
       Math.floor(perPage) === perPage ? perPage : Math.floor(perPage) + 1
     );
-    setPage(1)//first page
+    setPage(1); //first page
     setLoader(false);
   };
 
@@ -155,18 +245,108 @@ const Employees = () => {
     );
   };
 
+  const handleChange = async () => {
+    setPage(1);
+    setLoader(true);
+    const val = await EmployeeService.getAllEmployees();
+    const updatedVal = [];
+    val.forEach((x) => {
+      if (x.name.toLowerCase().includes(search.toLowerCase()))
+        updatedVal.push(x);
+    });
+    const perPage = updatedVal.length / itemsPerPage;
+    setMaxPage(
+      Math.floor(perPage) === perPage ? perPage : Math.floor(perPage) + 1
+    );
+    setEmployees(updatedVal);
+    setLoader(false);
+  };
+  const handleDeleteClick = (emp) => {
+    setSelectedEmployee(emp);
+    setShowDeleteModal(true);
+  };
+
+  const DeleteEmployee = async (e) => {
+    e.preventDefault();
+    setLoader(true);
+    await EmployeeService.delete([selectedEmployee.id]);
+    setLoader(false);
+    toast.success(`${selectedEmployee.name}'s records deleted successfully.`);
+    setSelectedEmployee("");
+    setShowDeleteModal(false);
+  };
+  const handleAddBtnClick = () => {
+    if (department || department.length > 0) {
+      setShowAddModal(true);
+    } else {
+      toast.error("Add a department first!!");
+    }
+  };
+  const handleEditClick = async (emp) => {
+    setSelectedEmployee({
+      ...emp,
+      original_email: emp.email,
+      original_user_name: emp.user_name,
+      department: await DepartmentService.getDepartmentID(emp.department),
+      original_profile: emp.profile,
+      original_appointment_letter: emp.appointment_letter,
+      original_salary_slips: emp.salary_slips,
+      original_reliving_letter: emp.reliving_letter,
+      original_experience_letter: emp.experience_letter,
+    });
+    setShowUpdateModal(true);
+  };
+
+  const handleFilterClick = () => {
+    setShowFilterModal(true);
+  };
+  const handleFilters = async (e) => {
+    e.preventDefault();
+    if (
+      filterData.searchEmpText !== "" ||
+      filterData.empDepArr.length > 0 ||
+      filterData.empTypeArr.length > 0
+    ) {
+      setLoader(true);
+      const res = await EmployeeService.filterEmployees(filterData);
+      setEmployees(res);
+      const perPage = res.length / itemsPerPage;
+      setMaxPage(
+        Math.floor(perPage) === perPage ? perPage : Math.floor(perPage) + 1
+      );
+      setShowFilterModal(false);
+      setPage(1); //first page
+      setLoader(false);
+    } else toast.error("Atleast choose one filter to apply changes.");
+  };
+  const handleClearFilters = async () => {
+    setFilterData({
+      searchEmpText: "",
+      empDepArr: [],
+      empTypeArr: [],
+    });
+    await getEmployees();
+  };
+
   //Rendering
   useEffect(() => {
-    if (!showAddModal) {
-      getEmployees();
+    if (!showAddModal && !showDeleteModal) {
+      if (search.length > 0) {
+        const timer = setTimeout(() => {
+          handleChange();
+        }, 500);
+        return () => clearTimeout(timer);
+      } else getEmployees();
     }
-  }, [showAddModal]);
+  }, [showAddModal, showUpdateModal, search, showDeleteModal]);
 
   useEffect(() => {
     getDepartments();
     getEmpID();
-  }, []);
-
+  }, [showAddModal]);
+  useEffect(() => {
+    console.log(filterData);
+  }, [filterData]);
   if (showAddModal)
     return (
       <div className="modal emp">
@@ -673,24 +853,780 @@ const Employees = () => {
         </div>
       </div>
     );
+  else if (showUpdateModal && selectedEmployee)
+    return (
+      <div className="modal emp">
+        <div className="add">
+          <h3>Edit Employee</h3>
+          <div className="pages">
+            {pages.map((page, key) => (
+              <button className={key === modalPage ? "active" : ""} key={key}>
+                <h3>{page.name}</h3>
+                {page.icon}
+              </button>
+            ))}
+          </div>
+          {
+            <form onSubmit={(e) => handleUpdateEmployee(e)}>
+              {(() => {
+                if (loader || department === "")
+                  return (
+                    <Loader size={50} fullHeight={true} fullWidth={true} />
+                  );
+                if (modalPage <= 0)
+                  return (
+                    <>
+                      <DragFiles
+                        className={"drag"}
+                        acceptedFiles={["jpg", "png", "jpeg"]}
+                        onChange={(file) =>
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            profile: file,
+                          })
+                        }
+                        value={selectedEmployee.profile}
+                      >
+                        <FaCamera />
+                      </DragFiles>
+                      <input
+                        onChange={(e) =>
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            first_name: e.target.value,
+                          })
+                        }
+                        value={selectedEmployee.first_name}
+                        type="text"
+                        placeholder="First Name"
+                      />
+                      <input
+                        onChange={(e) =>
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            last_name: e.target.value,
+                          })
+                        }
+                        type="text"
+                        placeholder="Last Name"
+                        value={selectedEmployee.last_name}
+                      />
+                      <input
+                        onChange={(e) =>
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            mobile_number: e.target.value,
+                          })
+                        }
+                        value={selectedEmployee.mobile_number}
+                        type="tel"
+                        placeholder="Mobile Number"
+                      />
+                      <input
+                        onChange={(e) =>
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            email: e.target.value,
+                          })
+                        }
+                        value={selectedEmployee.email}
+                        type="email"
+                        placeholder="Email Address"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Date of Birth"
+                        value={selectedEmployee.dob}
+                        onFocus={(e) => {
+                          e.target.type = "date";
+                        }}
+                        onBlur={(e) => {
+                          if (e.target.value == "") e.target.type = "text";
+                        }}
+                        onChange={(e) =>
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            dob: e.target.value,
+                          })
+                        }
+                      />
+                      <select
+                        className={
+                          selectedEmployee.marital_status ? "" : "placeholder"
+                        }
+                        onChange={(e) => {
+                          if (e.target.value === "-1")
+                            e.target.classList.add("placeholder");
+                          else e.target.classList.remove("placeholder");
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            marital_status: e.target.value,
+                          });
+                        }}
+                      >
+                        <option
+                          selected={
+                            selectedEmployee.marital_status == "-1"
+                              ? true
+                              : false
+                          }
+                          value={-1}
+                        >
+                          Marital Status
+                        </option>
+                        <option
+                          selected={
+                            selectedEmployee.marital_status == "Married"
+                              ? true
+                              : false
+                          }
+                          value="Married"
+                        >
+                          Married
+                        </option>
+                        <option
+                          selected={
+                            selectedEmployee.marital_status == "Unmarried"
+                              ? true
+                              : false
+                          }
+                          value="Unmarried"
+                        >
+                          Unmarried
+                        </option>
+                      </select>
+                      <select
+                        className={selectedEmployee.gender ? "" : "placeholder"}
+                        onChange={(e) => {
+                          if (e.target.value === "-1")
+                            e.target.classList.add("placeholder");
+                          else e.target.classList.remove("placeholder");
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            gender: e.target.value,
+                          });
+                        }}
+                      >
+                        <option
+                          selected={
+                            selectedEmployee.gender == "-1" ? true : false
+                          }
+                          value={-1}
+                        >
+                          Gender
+                        </option>
+                        <option
+                          selected={
+                            selectedEmployee.gender == "Male" ? true : false
+                          }
+                          value="Male"
+                        >
+                          Male
+                        </option>
+                        <option
+                          selected={
+                            selectedEmployee.gender == "Female" ? true : false
+                          }
+                          value="Female"
+                        >
+                          Female
+                        </option>
+                        <option
+                          selected={
+                            selectedEmployee.gender == "Other" ? true : false
+                          }
+                          value="Other"
+                        >
+                          Other
+                        </option>
+                      </select>
+                      <select
+                        className={
+                          selectedEmployee.country ? "" : "placeholder"
+                        }
+                        onChange={(e) => {
+                          if (e.target.value === "-1")
+                            e.target.classList.add("placeholder");
+                          else e.target.classList.remove("placeholder");
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            country: e.target.value,
+                          });
+                        }}
+                      >
+                        <option
+                          selected={
+                            selectedEmployee.country == "-1" ? true : false
+                          }
+                          value={-1}
+                        >
+                          Country
+                        </option>
+                        {countryOptions.map((country, key) => (
+                          <option
+                            selected={
+                              selectedEmployee.country == country.label
+                                ? true
+                                : false
+                            }
+                            key={key}
+                            value={country.label}
+                          >
+                            {country.label}
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        type="text"
+                        className="full-input"
+                        placeholder="Address"
+                        value={selectedEmployee.address}
+                        onChange={(e) =>
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            address: e.target.value,
+                          })
+                        }
+                      />
+                      <input
+                        type="text"
+                        className="one-third-input"
+                        placeholder="City"
+                        value={selectedEmployee.city}
+                        onChange={(e) =>
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            city: e.target.value,
+                          })
+                        }
+                      />
+                      <input
+                        type="text"
+                        className="one-third-input"
+                        placeholder="State"
+                        value={selectedEmployee.state}
+                        onChange={(e) =>
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            state: e.target.value,
+                          })
+                        }
+                      />
+                      <input
+                        type="text"
+                        className="one-third-input"
+                        placeholder="Zip Code"
+                        value={selectedEmployee.zip_code}
+                        onChange={(e) =>
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            zip_code: e.target.value,
+                          })
+                        }
+                      />
+                    </>
+                  );
+                else if (modalPage === 1)
+                  return (
+                    <>
+                      <input
+                        value={selectedEmployee.empId}
+                        readOnly
+                        type="text"
+                        placeholder="Employee ID"
+                        style={{ backgroundColor: "var(--pannelHoverColor)" }}
+                      />
+                      <input
+                        type="text"
+                        placeholder="User Name"
+                        value={selectedEmployee.user_name}
+                        onChange={(e) =>
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            user_name: e.target.value,
+                          })
+                        }
+                      />
+                      <select
+                        className={
+                          selectedEmployee.emp_type ? "" : "placeholder"
+                        }
+                        onChange={(e) => {
+                          if (e.target.value === "-1")
+                            e.target.classList.add("placeholder");
+                          else e.target.classList.remove("placeholder");
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            emp_type: e.target.value,
+                          });
+                        }}
+                      >
+                        <option
+                          selected={
+                            selectedEmployee.emp_type == "-1" ? true : false
+                          }
+                          value={-1}
+                        >
+                          Select Employee Type
+                        </option>
+                        {Object.keys(EMPLOYEE_TYPES).map((type, key) => (
+                          <option
+                            selected={
+                              selectedEmployee.emp_type == EMPLOYEE_TYPES[type]
+                                ? true
+                                : false
+                            }
+                            key={key}
+                            value={EMPLOYEE_TYPES[type]}
+                          >
+                            {EMPLOYEE_TYPES[type]}
+                          </option>
+                        ))}
+                      </select>
+                      <select
+                        className={
+                          selectedEmployee.department ? "" : "placeholder"
+                        }
+                        onChange={(e) => {
+                          if (e.target.value === "-1")
+                            e.target.classList.add("placeholder");
+                          else e.target.classList.remove("placeholder");
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            department: e.target.value,
+                          });
+                        }}
+                      >
+                        <option
+                          selected={
+                            selectedEmployee.department == "-1" ? true : false
+                          }
+                          value={-1}
+                        >
+                          Select Department
+                        </option>
+                        {department.map((dep, key) => (
+                          <option
+                            selected={
+                              selectedEmployee.department == dep.id
+                                ? true
+                                : false
+                            }
+                            key={key}
+                            value={dep.id}
+                          >
+                            {dep.name}
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        type="text"
+                        value={selectedEmployee.designation}
+                        onChange={(e) =>
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            designation: e.target.value,
+                          })
+                        }
+                        placeholder="Enter Designation"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Select Joining Date"
+                        value={selectedEmployee.joining_date}
+                        onChange={(e) =>
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            joining_date: e.target.value,
+                          })
+                        }
+                        onFocus={(e) => {
+                          e.target.type = "date";
+                        }}
+                        onBlur={(e) => {
+                          if (e.target.value == "") e.target.type = "text";
+                        }}
+                      />
+                      <select
+                        className={`${
+                          selectedEmployee.office_location ? "" : "placeholder"
+                        } full-input`}
+                        onChange={(e) => {
+                          if (e.target.value === "-1")
+                            e.target.classList.add("placeholder");
+                          else e.target.classList.remove("placeholder");
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            office_location: e.target.value,
+                          });
+                        }}
+                      >
+                        <option
+                          selected={
+                            selectedEmployee.office_location == "-1"
+                              ? true
+                              : false
+                          }
+                          value={-1}
+                        >
+                          Select Office Location
+                        </option>
+                        {Object.keys(OFFICE_LOCATIONS).map((location, key) => (
+                          <option
+                            selected={
+                              selectedEmployee.office_location ==
+                              OFFICE_LOCATIONS[location]
+                                ? true
+                                : false
+                            }
+                            key={key}
+                            value={OFFICE_LOCATIONS[location]}
+                          >
+                            {OFFICE_LOCATIONS[location]}
+                          </option>
+                        ))}
+                      </select>
+                    </>
+                  );
+                else if (modalPage === 2)
+                  return (
+                    <>
+                      <div className="upload">
+                        <h3>Upload Appointment Letter</h3>
+                        <DragFiles
+                          className={"fileDrag"}
+                          acceptedFiles={["jpg", "png", "jpeg", "pdf"]}
+                          onChange={(file) =>
+                            setSelectedEmployee({
+                              ...selectedEmployee,
+                              appointment_letter: file,
+                            })
+                          }
+                          value={selectedEmployee.appointment_letter}
+                        >
+                          <div className="icon">
+                            <FaCloudArrowUp />
+                          </div>
+                          <h3>
+                            Drag & Drop or <span>choose file</span> to upload
+                          </h3>
+                          <h5>Supported formats : Jpg, Png, Jpeg, pdf</h5>
+                        </DragFiles>
+                      </div>
+                      <div className="upload">
+                        <h3>Upload Salary Slips</h3>
+                        <DragFiles
+                          className={"fileDrag"}
+                          acceptedFiles={["jpg", "png", "jpeg", "pdf"]}
+                          onChange={(file) =>
+                            setSelectedEmployee({
+                              ...selectedEmployee,
+                              salary_slips: file,
+                            })
+                          }
+                          value={selectedEmployee.salary_slips}
+                        >
+                          <div className="icon">
+                            <FaCloudArrowUp />
+                          </div>
+                          <h3>
+                            Drag & Drop or <span>choose file</span> to upload
+                          </h3>
+                          <h5>Supported formats : Jpg, Png, Jpeg, pdf</h5>
+                        </DragFiles>
+                      </div>
+                      <div className="upload">
+                        <h3>Upload Reliving Letter</h3>
+                        <DragFiles
+                          className={"fileDrag"}
+                          acceptedFiles={["jpg", "png", "jpeg", "pdf"]}
+                          onChange={(file) =>
+                            setSelectedEmployee({
+                              ...selectedEmployee,
+                              reliving_letter: file,
+                            })
+                          }
+                          value={selectedEmployee.reliving_letter}
+                        >
+                          <div className="icon">
+                            <FaCloudArrowUp />
+                          </div>
+                          <h3>
+                            Drag & Drop or <span>choose file</span> to upload
+                          </h3>
+                          <h5>Supported formats : Jpg, Png, Jpeg, pdf</h5>
+                        </DragFiles>
+                      </div>
+                      <div className="upload">
+                        <h3>Upload Experience Letter</h3>
+                        <DragFiles
+                          className={"fileDrag"}
+                          acceptedFiles={["jpg", "png", "jpeg", "pdf"]}
+                          onChange={(file) =>
+                            setSelectedEmployee({
+                              ...selectedEmployee,
+                              experience_letter: file,
+                            })
+                          }
+                          value={selectedEmployee.experience_letter}
+                        >
+                          <div className="icon">
+                            <FaCloudArrowUp />
+                          </div>
+                          <h3>
+                            Drag & Drop or <span>choose file</span> to upload
+                          </h3>
+                          <h5>Supported formats : Jpg, Png, Jpeg, pdf</h5>
+                        </DragFiles>
+                      </div>
+                    </>
+                  );
+                else if (modalPage >= 3)
+                  return (
+                    <>
+                      <input
+                        type="text"
+                        value={selectedEmployee.linkedin_url}
+                        onChange={(e) =>
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            linkedin_url: e.target.value,
+                          })
+                        }
+                        placeholder="Enter Linkedin ID"
+                      />
+                      <input
+                        type="text"
+                        value={selectedEmployee.slack_url}
+                        onChange={(e) =>
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            slack_url: e.target.value,
+                          })
+                        }
+                        placeholder="Enter Slack ID"
+                      />
+                      <input
+                        type="text"
+                        value={selectedEmployee.skype_url}
+                        onChange={(e) =>
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            skype_url: e.target.value,
+                          })
+                        }
+                        placeholder="Enter Skype ID"
+                      />
+                      <input
+                        type="text"
+                        value={selectedEmployee.github_url}
+                        onChange={(e) =>
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            github_url: e.target.value,
+                          })
+                        }
+                        placeholder="Enter Github ID"
+                      />
+                    </>
+                  );
+              })()}
+              {loader || department === "" ? null : (
+                <div className="btns">
+                  {modalPage > 0 ? (
+                    <input
+                      type="button"
+                      onClick={() => setModalPage((prev) => prev - 1)}
+                      value="Back"
+                    />
+                  ) : null}
+                  <div className="btns">
+                    <input
+                      type="button"
+                      value="Cancel"
+                      onClick={() => {
+                        setShowUpdateModal(false);
+                        setSelectedEmployee("");
+                        setFilterData({
+                          searchEmpText: "",
+                          empDepArr: [],
+                          empTypeArr: [],
+                        });
+                        setModalPage(0);
+                        setPage(1);
+                      }}
+                    />
+                    <input
+                      type="submit"
+                      value={modalPage < pages.length - 1 ? "Next" : "Edit"}
+                    />
+                  </div>
+                </div>
+              )}
+            </form>
+          }
+        </div>
+      </div>
+    );
+  else if (showDeleteModal && selectedEmployee)
+    return (
+      <div className="modal">
+        <div className="add">
+          <h3>Delete Employee Records</h3>
+          {loader ? (
+            <Loader size={50} />
+          ) : (
+            <form onSubmit={(e) => DeleteEmployee(e)}>
+              <p>Do you want to delete the record of {selectedEmployee.name}</p>
+              <div className="btns">
+                <input
+                  type="button"
+                  value="Cancel"
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setSelectedEmployee("");
+                    setFilterData({
+                      searchEmpText: "",
+                      empDepArr: [],
+                      empTypeArr: [],
+                    });
+                  }}
+                />
+                <input type="submit" value="Delete" />
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
+    );
+  else if (showFilterModal)
+    return (
+      <div className="modal">
+        <div className="add">
+          <h3>Filter</h3>
+          {department === "" || loader ? (
+            <Loader size={50} />
+          ) : (
+            <>
+              <SearchBar
+                onChange={(e) =>
+                  setFilterData({
+                    ...filterData,
+                    searchEmpText: e.target.value,
+                  })
+                }
+                placeholder="Search Employee"
+              />
+              <form onSubmit={(e) => handleFilters(e)}>
+                <div className="content">
+                  <h3>Department</h3>
+                  <div className="values">
+                    {department.map((dep, key) => (
+                      <CheckBox
+                        onChange={(val) => {
+                          if (val)
+                            setFilterData({
+                              ...filterData,
+                              empDepArr: [...filterData.empDepArr, dep.id],
+                            });
+                          else
+                            setFilterData((prev) => {
+                              const arr = prev.empDepArr;
+                              arr.splice(arr.indexOf(dep.id), 1);
+                              prev.empDepArr = arr;
+                              return prev;
+                            });
+                        }}
+                        className="child"
+                        text={dep.name}
+                        key={key}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div className="content">
+                  <h3>Select Type</h3>
+                  <div className="values">
+                    {Object.keys(EMPLOYEE_TYPES).map((type, key) => (
+                      <RadioButton
+                        onChange={(val) => {
+                          if (val)
+                            setFilterData({
+                              ...filterData,
+                              empTypeArr: [
+                                ...filterData.empTypeArr,
+                                EMPLOYEE_TYPES[type],
+                              ],
+                            });
+                          else
+                            setFilterData((prev) => {
+                              const arr = prev.empTypeArr;
+                              arr.splice(arr.indexOf(EMPLOYEE_TYPES[type]), 1);
+                              prev.empTypeArr = arr;
+                              return prev;
+                            });
+                        }}
+                        className="child"
+                        text={EMPLOYEE_TYPES[type]}
+                        key={key}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div className="btns">
+                  <input
+                    type="button"
+                    value="Cancel"
+                    onClick={() => {
+                      setShowFilterModal(false);
+                      setFilterData({
+                        searchEmpText: "",
+                        empDepArr: [],
+                        empTypeArr: [],
+                      });
+                    }}
+                  />
+                  <input type="submit" value="Apply" />
+                </div>
+              </form>
+            </>
+          )}
+        </div>
+      </div>
+    );
   else
     return (
       <div className="Employee">
-        <div className="top">
-          <SearchBar />
-          <div className="btns">
-            <button onClick={() => setShowAddModal(true)}>
-              <FaPlusCircle />
-              <h3>Add More</h3>
-            </button>
-            <button>
-              <VscSettings />
-              <h3>Filter</h3>
-            </button>
+        {filterData.searchEmpText === "" &&
+        filterData.empDepArr.length === 0 &&
+        filterData.empTypeArr.length === 0 ? (
+          <div className="top">
+            <SearchBar value={search} onChange={(e) => setSearch(e.target.value)} />
+            <div className="btns">
+              <button onClick={handleAddBtnClick}>
+                <FaPlusCircle />
+                <h3>Add More</h3>
+              </button>
+              <button onClick={handleFilterClick}>
+                <VscSettings />
+                <h3>Filter</h3>
+              </button>
+            </div>
           </div>
-        </div>
-        {employees === "" ? (
+        ) : (
+          <div className="top filter-box">
+            <div className="btns">
+              <button onClick={handleClearFilters}>
+                <MdOutlineClear />
+                <h3>Clear Filters</h3>
+              </button>
+            </div>
+          </div>
+        )}
+        {employees === "" || loader ? (
           <Loader size={50} fullHeight={true} fullWidth={true} />
+        ) : employees.length === 0 ? (
+          <h3 className="empty-text-signal">No Employee is added!!</h3>
         ) : (
           <div className="bottom">
             <table>
@@ -707,6 +1643,7 @@ const Employees = () => {
               </thead>
               <tbody>
                 {employees
+                  .sort((a, b) => a.empId.localeCompare(b.empId))
                   .slice((page - 1) * itemsPerPage, page * itemsPerPage)
                   .map((emp, key) => (
                     <tr key={key}>
@@ -716,16 +1653,37 @@ const Employees = () => {
                           <h3>{emp.name}</h3>
                         </div>
                       </td>
-                      <td>{emp.empId}</td>
-                      <td>{emp.department}</td>
-                      <td>{emp.designation}</td>
-                      <td>{emp.office_location}</td>
-                      <td>{emp.emp_type}</td>
+                      <td>
+                        <h3>{emp.empId}</h3>
+                      </td>
+                      <td>
+                        <h3>{emp.department}</h3>
+                      </td>
+                      <td>
+                        <h3>{emp.designation}</h3>
+                      </td>
+                      <td>
+                        <h3>{emp.office_location}</h3>
+                      </td>
+                      <td className="color-td">
+                        <h3>{emp.emp_type}</h3>
+                      </td>
                       <td>
                         <div className="table-box">
-                          <FaEye />
-                          <FaPencil />
-                          <FaTrashAlt />
+                          <FaEye className="icon" />
+                          <FaPencil
+                            onClick={() => handleEditClick(emp)}
+                            className="icon"
+                          />
+                          <FaTrashAlt
+                            onClick={() =>
+                              handleDeleteClick({
+                                name: emp.name,
+                                id: emp.id,
+                              })
+                            }
+                            className="icon"
+                          />
                         </div>
                       </td>
                     </tr>
@@ -742,7 +1700,11 @@ const Employees = () => {
                 </select>
               </div>
               <p>
-                Showing {(page - 1) * itemsPerPage + 1} to{" "}
+                Showing{" "}
+                {(page - 1) * itemsPerPage + 1 > employees.length
+                  ? employees.length
+                  : (page - 1) * itemsPerPage + 1}{" "}
+                to{" "}
                 {page * itemsPerPage > employees.length
                   ? employees.length
                   : page * itemsPerPage}{" "}

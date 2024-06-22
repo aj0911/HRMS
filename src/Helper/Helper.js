@@ -1,6 +1,6 @@
 import emailjs from "@emailjs/browser";
 import bcrypt from "bcryptjs";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
 import { storage } from "../firebase";
 
 export const Constants = {
@@ -89,18 +89,18 @@ export const greeting = () => {
   return greets[2];
 };
 
-export const sendDesktopNotification = () => {};
+export const sendDesktopNotification = () => { };
 
 export const EMPLOYEE_TYPES = {
-  FULL_TIME_EMPLOYEES: "Full-Time Employees",
-  PART_TIME_EMPLOYEES: "Part-Time Employees",
-  CONTRACT_EMPLOYEES: "Contract Employees",
-  TEMPORARY_EMPLOYEES: "Temporary Employees",
+  FULL_TIME_EMPLOYEES: "Full-Time",
+  PART_TIME_EMPLOYEES: "Part-Time",
+  CONTRACT_EMPLOYEES: "Contract",
+  TEMPORARY_EMPLOYEES: "Temporary",
   INTERNS: "Interns",
-  FREELANCERS_CONSULTANTS: "Freelancers/Consultants",
-  REMOTE_EMPLOYEES: "Remote Employees",
-  SEASONAL_EMPLOYEES: "Seasonal Employees",
-  GIG_WORKERS: "Gig Workers",
+  FREELANCERS_CONSULTANTS: "Freelance",
+  REMOTE_EMPLOYEES: "Remote",
+  SEASONAL_EMPLOYEES: "Seasonal",
+  GIG_WORKERS: "Gig",
   VOLUNTEERS: "Volunteers",
 };
 
@@ -123,6 +123,7 @@ export const validateForm = (...formInputs) => {
 };
 
 export const uploadFile = async (file) => {
+  if ((typeof file) == 'string') return file;
   if (file) {
     try {
       const fileName = new Date().getTime() + file.name;
@@ -153,8 +154,8 @@ export const uploadFile = async (file) => {
       });
 
       const downloadURL = await getDownloadURL(uploadTaskSnapshot.ref);
+      console.log('file uploaded')
       return downloadURL;
-
     } catch (error) {
       console.log(error.message);
     }
@@ -162,3 +163,26 @@ export const uploadFile = async (file) => {
   return null;
 };
 
+export const deleteFile = async (file_url) => {
+  console.log(file_url)
+  if (file_url) {
+    try {
+      const deleteRef = ref(
+        storage,
+        file_url.slice(file_url.indexOf(".com/o/") + 7, file_url.indexOf("?"))
+      );
+      await deleteObject(deleteRef)
+      console.log('file deleted')
+    }
+    catch (error) {
+      console.log(error.message);
+    }
+  }
+};
+
+export const userAlreadyExistInData = (data,userID)=>{
+  for(let user of data){
+    if(user.id ===userID)return true;
+  }
+  return false;
+}

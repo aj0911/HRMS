@@ -1,0 +1,25 @@
+.checkbox-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .5rem;
+    .checkbox{
+        border: 1px solid var(--borderColor-1);
+        border-radius: 5px;
+        background-color: var(--bgColor);
+        color: var(--bgColor);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: var(--transition);
+    }
+    .checkbox.active{
+        background-color: var(--secColor-1);
+    }
+    h3{
+        font-size: .9rem;
+        font-weight: 400;
+        color: var(--textColor-1);
+        text-transform: capitalize;
+    }
+}

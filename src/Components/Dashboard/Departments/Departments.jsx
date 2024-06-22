@@ -76,22 +76,26 @@ const Departments = () => {
           <Loader size={50} fullHeight={true} fullWidth={true} />
         ) : (
           <div className="bottom">
-            {departments
-              .sort((a, b) => b.timeStamp - a.timeStamp)
-              .map((department, key) => (
-                <div className="department" key={key}>
-                  <div className="header">
-                    <div className="content">
-                      <h3>{department?.name}</h3>
-                      <h5>{department?.employees?.length || 0} Members</h5>
+            {departments.length === 0 ? (
+              <h3 className="empty-text-signal">No Department is added!!</h3>
+            ) : (
+              departments
+                .sort((a,b)=>a.name.localeCompare(b.name))
+                .map((department, key) => (
+                  <div className="department" key={key}>
+                    <div className="header">
+                      <div className="content">
+                        <h3>{department?.name}</h3>
+                        <h5>{department?.employees?.length || 0} Members</h5>
+                      </div>
+                      <h3>View All</h3>
                     </div>
-                    <h3>View All</h3>
+                    {department?.employees?.length === 0 ? (
+                      <div className="employees"></div>
+                    ) : null}
                   </div>
-                  {department?.employees?.length === 0 ? (
-                    <div className="employees"></div>
-                  ) : null}
-                </div>
-              ))}
+                ))
+            )}
           </div>
         )}
       </div>

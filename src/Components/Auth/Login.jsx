@@ -52,7 +52,7 @@ const Login = ({ setComponent }) => {
             ) {
               flag = true;
               if (compareEncryptedData(userData.pass, user.pass)) {
-                dispatch(login({ user, remember: checkbox.current.checked }));
+                dispatch(login({ user, remember: checkbox.current?.checked }));
                 setAlertData({
                   show: true,
                   type: 0,

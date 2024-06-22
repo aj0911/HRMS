@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import Loader from "../../Components/Loader/Loader";
 
-const DragFiles = ({ children, className, acceptedFiles,value,onChange }) => {
+const DragFiles = ({ children, className, acceptedFiles, value, onChange }) => {
   //states
   const inputRef = useRef();
   const [showImgView, setShowImgView] = useState({ val: null, show: false });
@@ -10,8 +10,8 @@ const DragFiles = ({ children, className, acceptedFiles,value,onChange }) => {
   //Methods
   const handleFileUpload = () => {
     const fileObj = inputRef.current.files && inputRef.current.files[0];
-    console.log(fileObj)
-    onChange(fileObj)
+    console.log(fileObj);
+    onChange(fileObj);
     if (!fileObj) {
       setShowImgView({ val: null, show: false });
       return;
@@ -20,12 +20,11 @@ const DragFiles = ({ children, className, acceptedFiles,value,onChange }) => {
     const regex = new RegExp("[^.]+$");
     const extension = fileName.match(regex).toString();
     if (acceptedFiles.includes(extension.toLowerCase())) {
-      if(extension==='pdf'){
-        setShowImgView({val:fileName,show:true,isPdf:true})
-      }
-      else{
+      if (extension === "pdf") {
+        setShowImgView({ val: fileName, show: true, isPdf: true });
+      } else {
         const imgLink = URL.createObjectURL(fileObj);
-        setShowImgView({ val: imgLink, show: true,isPdf:false });
+        setShowImgView({ val: imgLink, show: true, isPdf: false });
       }
     } else {
       toast.error(`Only ${acceptedFiles.toString()} files are allowed.`);
@@ -38,36 +37,33 @@ const DragFiles = ({ children, className, acceptedFiles,value,onChange }) => {
     handleFileUpload();
   };
 
-  useEffect(()=>{
-    if(value){
+  useEffect(() => {
+    if (value) {
       const fileObj = value;
       if (!fileObj) {
         setShowImgView({ val: null, show: false });
-      }
-      else{
+      } else if ((typeof fileObj)=='string') {
+        if (fileObj.includes("pdf"))
+          setShowImgView({ val: 'Pdf File', show: true, isPdf: true });
+        else setShowImgView({ val: fileObj, show: true });
+      } else {
         const fileName = fileObj.name;
         const regex = new RegExp("[^.]+$");
         const extension = fileName.match(regex).toString();
-        if(extension==='pdf'){
-          setShowImgView({val:fileName,show:true,isPdf:true})
-        }
-        else{
+        if (extension === "pdf") {
+          setShowImgView({ val: fileName, show: true, isPdf: true });
+        } else {
           const imgLink = URL.createObjectURL(fileObj);
-          setShowImgView({ val: imgLink, show: true,isPdf:false });
+          setShowImgView({ val: imgLink, show: true, isPdf: false });
         }
       }
     }
-    
-  },[])
-  if(value && !showImgView.show) return <Loader size={50}/>
+  }, []);
+  
+  if (value && !showImgView.show) return <Loader size={50} />;
   return (
     <div className="DragFiles">
-      <input
-        onChange={handleFileUpload}
-        ref={inputRef}
-        type="file"
-        hidden
-      />
+      <input onChange={handleFileUpload} ref={inputRef} type="file" hidden />
       <div
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => handleFileDrop(e)}
@@ -75,13 +71,14 @@ const DragFiles = ({ children, className, acceptedFiles,value,onChange }) => {
         className={className}
       >
         {showImgView.show ? (
-          showImgView.isPdf?
-          <div className="pdfView">
-            <img src={require('../../Assets/Images/pdf.png')} alt="" />
-            <h3>{showImgView.val}</h3>
-          </div>
-          :
-          <img src={showImgView.val} alt="Uploaded File" />
+          showImgView.isPdf ? (
+            <div className="pdfView">
+              <img src={require("../../Assets/Images/pdf.png")} alt="" />
+              <h3>{showImgView.val}</h3>
+            </div>
+          ) : (
+            <img src={showImgView.val} alt="Uploaded File" />
+          )
         ) : (
           children
         )}
