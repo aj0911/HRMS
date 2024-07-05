@@ -6,6 +6,7 @@ import {
   FaAngleRight,
   FaBriefcase,
   FaCamera,
+  FaClipboardList,
   FaEye,
   FaPlusCircle,
   FaTrashAlt,
@@ -13,7 +14,7 @@ import {
 } from "react-icons/fa";
 import { VscSettings } from "react-icons/vsc";
 import { MdMail, MdOutlineClear } from "react-icons/md";
-import { IoIosLock } from "react-icons/io";
+import { IoIosLock, IoMdMail } from "react-icons/io";
 import countryList from "react-select-country-list";
 import DragFiles from "../../../Helper/DragFiles/DragFiles";
 import {
@@ -29,6 +30,12 @@ import toast from "react-hot-toast";
 import EmployeeService from "../../../Services/EmployeeService";
 import CheckBox from "../../../Helper/CheckBox/CheckBox";
 import RadioButton from "../../../Helper/RadioButton/RadioButton";
+import { PiPencilLine } from "react-icons/pi";
+import { LuCalendarCheck, LuClipboardList } from "react-icons/lu";
+import Profile from "./Profile";
+import EmpAttendance from "./EmpAttendance";
+import EmpLeave from "./EmpLeave";
+import EmpProjects from "./EmpProjects";
 
 const Employees = () => {
   //States
@@ -41,18 +48,134 @@ const Employees = () => {
     {
       name: "Personal Information",
       icon: <FaUser />,
+      datas:(emp)=>[
+        {
+          name:'First Name',
+          val:emp.first_name
+        },
+        {
+          name:'Last Name',
+          val:emp.last_name
+        },
+        {
+          name:'Mobile Number',
+          val:emp.mobile_number
+        },
+        {
+          name:'Email',
+          val:emp.email
+        },
+        {
+          name:'Date of Birth',
+          val:emp.dob
+        },
+        {
+          name:'Marital Status',
+          val:emp.marital_status
+        },
+        {
+          name:'Gender',
+          val:emp.gender
+        },
+        {
+          name:'Country',
+          val:emp.country
+        },
+        {
+          name:'Address',
+          val:emp.address
+        },
+        {
+          name:'City',
+          val:emp.city
+        },
+        {
+          name:'State',
+          val:emp.state
+        },
+        {
+          name:'Zip Code',
+          val:emp.zip_code
+        },
+      ]
     },
     {
       name: "Professional Information",
       icon: <FaBriefcase />,
+      datas:(emp)=>[
+        {
+          name:'Employee ID',
+          val:emp.empId
+        },
+        {
+          name:'User Name',
+          val:emp.user_name
+        },
+        {
+          name:'Employee Type',
+          val:emp.emp_type
+        },
+        {
+          name:'Department',
+          val:emp.department
+        },
+        {
+          name:'Designation',
+          val:emp.designation
+        },
+        {
+          name:'Joining Date',
+          val:emp.joining_date
+        },
+        {
+          name:'Office Location',
+          val:emp.office_location
+        },
+      ]
     },
     {
       name: "Documents",
       icon: <MdMail />,
+      datas:(emp)=>[
+        {
+          name:'Appointment Letter',
+          val:emp.appointment_letter
+        },
+        {
+          name:'Salary Slip',
+          val:emp.salary_slips
+        },
+        {
+          name:'Reliving Letter',
+          val:emp.reliving_letter
+        },
+        {
+          name:'Experience Letter',
+          val:emp.experience_letter
+        },
+      ]
     },
     {
       name: "Account Access",
       icon: <IoIosLock />,
+      datas:(emp)=>[
+        {
+          name:'Linkedin ID',
+          val:emp.linkedin_url
+        },
+        {
+          name:'Slack ID',
+          val:emp.slack_url
+        },
+        {
+          name:'Skype ID',
+          val:emp.skype_url
+        },
+        {
+          name:'Github ID',
+          val:emp.github_url
+        }
+      ]
     },
   ];
   const countryOptions = useMemo(() => countryList().getData(), []);
@@ -70,11 +193,34 @@ const Employees = () => {
     empTypeArr: [],
   });
   const [showFilterModal, setShowFilterModal] = useState(false);
+  const [viewEmp, setViewEmp] = useState(false);
+  const ViewProfileArr = [
+    {
+      name: "Profile",
+      icon: <FaUser />,
+      component: <Profile pages={pages} emp={selectedEmployee}/>,
+    },
+    {
+      name: "Attendance",
+      icon: <LuCalendarCheck />,
+      component: <EmpAttendance />,
+    },
+    {
+      name: "Projects",
+      icon: <FaClipboardList />,
+      component: <EmpProjects />,
+    },
+    {
+      name: "Leave",
+      icon: <LuClipboardList />,
+      component: <EmpLeave />,
+    },
+  ];
+  const [viewComponent, setViewComponent] = useState(0);
 
   //Methods
   const handleAddEmployee = async (e) => {
     e.preventDefault();
-    console.log(data);
     //Add Button Logic
     setLoader(true);
     if (modalPage === pages.length - 1) {
@@ -226,8 +372,8 @@ const Employees = () => {
   const getEmployees = async () => {
     setLoader(true);
     const val = await EmployeeService.getAllEmployees();
-    setEmployees(val);
-    const perPage = val.length / itemsPerPage;
+    setEmployees(val); //11
+    const perPage = val.length / itemsPerPage; //11/10 = 1.1
     setMaxPage(
       Math.floor(perPage) === perPage ? perPage : Math.floor(perPage) + 1
     );
@@ -328,6 +474,11 @@ const Employees = () => {
     await getEmployees();
   };
 
+  const handleViewClick = (emp) => {
+    setSelectedEmployee(emp);
+    setViewEmp(true);
+  };
+
   //Rendering
   useEffect(() => {
     if (!showAddModal && !showDeleteModal) {
@@ -344,9 +495,6 @@ const Employees = () => {
     getDepartments();
     getEmpID();
   }, [showAddModal]);
-  useEffect(() => {
-    console.log(filterData);
-  }, [filterData]);
   if (showAddModal)
     return (
       <div className="modal emp">
@@ -838,7 +986,7 @@ const Employees = () => {
                       onClick={() => {
                         setShowAddModal(false);
                         setData("");
-                        setModalPage(0);
+                        setModalPage(0); //Important line
                       }}
                     />
                     <input
@@ -1594,6 +1742,57 @@ const Employees = () => {
         </div>
       </div>
     );
+  else if (viewEmp && selectedEmployee)
+    return (
+      <div className="viewEmp">
+        <div className="top">
+          <div className="profile-box">
+            <img src={selectedEmployee.profile} />
+            <div className="content-box">
+              <h3>{selectedEmployee.name}</h3>
+              <h4>
+                <FaBriefcase /> {selectedEmployee.designation}
+              </h4>
+              <h4>
+                <IoMdMail /> {selectedEmployee.email}
+              </h4>
+            </div>
+          </div>
+          <div className="btns">
+            <button onClick={()=>{
+              setViewEmp(false);
+              handleEditClick(selectedEmployee);
+            }}>
+              <PiPencilLine />
+              <h3>Edit Profile</h3>
+            </button>
+            <button onClick={()=>{
+              setSelectedEmployee('');
+              setViewEmp(false);
+            }}>
+              <FaEye/>
+              <h3>View All</h3>
+            </button>
+          </div>
+        </div>
+        <div className="bottom">
+          <div className="nav-box">
+            {ViewProfileArr.map((nav, idx) => (
+              <button
+                className={idx === viewComponent ? "active" : ""}
+                onClick={() => setViewComponent(idx)}
+              >
+                {nav.icon}
+                <h3>{nav.name}</h3>
+              </button>
+            ))}
+          </div>
+          <div className="comp-box">
+            {ViewProfileArr[viewComponent].component}
+          </div>
+        </div>
+      </div>
+    );
   else
     return (
       <div className="Employee">
@@ -1601,7 +1800,10 @@ const Employees = () => {
         filterData.empDepArr.length === 0 &&
         filterData.empTypeArr.length === 0 ? (
           <div className="top">
-            <SearchBar value={search} onChange={(e) => setSearch(e.target.value)} />
+            <SearchBar
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
             <div className="btns">
               <button onClick={handleAddBtnClick}>
                 <FaPlusCircle />
@@ -1643,8 +1845,8 @@ const Employees = () => {
               </thead>
               <tbody>
                 {employees
-                  .sort((a, b) => a.empId.localeCompare(b.empId))
-                  .slice((page - 1) * itemsPerPage, page * itemsPerPage)
+                  .sort((a, b) => a.empId.localeCompare(b.empId)) //sorting
+                  .slice((page - 1) * itemsPerPage, page * itemsPerPage) //pagination
                   .map((emp, key) => (
                     <tr key={key}>
                       <td>
@@ -1670,7 +1872,10 @@ const Employees = () => {
                       </td>
                       <td>
                         <div className="table-box">
-                          <FaEye className="icon" />
+                          <FaEye
+                            className="icon"
+                            onClick={() => handleViewClick(emp)}
+                          />
                           <FaPencil
                             onClick={() => handleEditClick(emp)}
                             className="icon"

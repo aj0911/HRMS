@@ -186,3 +186,10 @@ export const userAlreadyExistInData = (data,userID)=>{
   }
   return false;
 }
+
+export const checkIsSingleDataExist = (arr,parameter)=>{
+  for(let x of arr){
+    if(x[parameter])return true;
+  }
+  return false;
+}

@@ -10,10 +10,9 @@ const DragFiles = ({ children, className, acceptedFiles, value, onChange }) => {
   //Methods
   const handleFileUpload = () => {
     const fileObj = inputRef.current.files && inputRef.current.files[0];
-    console.log(fileObj);
-    onChange(fileObj);
     if (!fileObj) {
       setShowImgView({ val: null, show: false });
+      onChange(null);
       return;
     }
     const fileName = fileObj.name;
@@ -26,9 +25,11 @@ const DragFiles = ({ children, className, acceptedFiles, value, onChange }) => {
         const imgLink = URL.createObjectURL(fileObj);
         setShowImgView({ val: imgLink, show: true, isPdf: false });
       }
+      onChange(fileObj);
     } else {
       toast.error(`Only ${acceptedFiles.toString()} files are allowed.`);
-      setShowImgView({ val: null, show: false });
+      setShowImgView({ val: null, show: false,isError:true });
+      onChange(null);
     }
   };
   const handleFileDrop = (e) => {
@@ -60,7 +61,7 @@ const DragFiles = ({ children, className, acceptedFiles, value, onChange }) => {
     }
   }, []);
   
-  if (value && !showImgView.show) return <Loader size={50} />;
+  if (value && !showImgView.show && !showImgView.isError) return <Loader size={50} />;
   return (
     <div className="DragFiles">
       <input onChange={handleFileUpload} ref={inputRef} type="file" hidden />

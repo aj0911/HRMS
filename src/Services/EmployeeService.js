@@ -35,14 +35,6 @@ export default class EmployeeService extends Service {
 
   static async update(id, entity) {
     //Deleting Older Files
-    console.log(
-      entity,
-      entity.original_profile != entity.profile,
-      entity.original_appointment_letter != entity.appointment_letter,
-      entity.original_salary_slips != entity.salary_slips,
-      entity.original_reliving_letter != entity.reliving_letter,
-      entity.original_experience_letter != entity.experience_letter
-    );
     if (entity.original_profile != entity.profile)
       await deleteFile(entity.original_profile);
     if (entity.original_appointment_letter != entity.appointment_letter)
@@ -99,11 +91,10 @@ export default class EmployeeService extends Service {
   }
   //Add Extra methods...
   static async getNewEmpID() {
-    const all_users = await super.read("", "users");
-    let length = 1;
-    Object.values(all_users).forEach((x) => {
-      if (x.role === Roles.USER) length += 1;
-    });
+    const all_users = (await this.getAllEmployees()).sort((a, b) =>
+      a.empId.localeCompare(b.empId)
+    );
+    const length = Number(all_users[all_users.length-1].empId.split("-")[1])+1;
     if (length >= 0 && length <= 9) return `00${length}`;
     if (length >= 10 && length <= 99) return `0${length}`;
     return length;
@@ -139,7 +130,11 @@ export default class EmployeeService extends Service {
     const all_users = await super.read("", "users");
 
     const users = Object.values(all_users).filter((x) => x.role === Roles.USER);
-
+    /*
+      [
+    {
+      name:'',..., departement:'2342398472'},{name:'}]
+    */
     const departmentPromises = users.map((x) =>
       DepartmentService.read(x.department).then((department) => ({
         ...x,
@@ -157,7 +152,7 @@ export default class EmployeeService extends Service {
     let returnData2 = [];
     let returnData3 = [];
     let data = all_users;
-    if (searchEmpText!=='') {
+    if (searchEmpText !== "") {
       for (let user of data) {
         if (user.name.toLowerCase().includes(searchEmpText.toLowerCase()))
           returnData1.push(user);
@@ -167,21 +162,21 @@ export default class EmployeeService extends Service {
     if (empDepArr && empDepArr.length > 0) {
       for (let user of data) {
         for (let depID of empDepArr) {
-          if (depID === await DepartmentService.getDepartmentID(user.department))
-            returnData2.push(user)
+          if (
+            depID === (await DepartmentService.getDepartmentID(user.department))
+          )
+            returnData2.push(user);
         }
       }
       data = returnData2;
-    }
-    else returnData2 = returnData1;
+    } else returnData2 = returnData1;
     if (empTypeArr && empTypeArr.length > 0) {
       for (let user of data) {
         for (let empType of empTypeArr) {
-          if (empType === user.emp_type) returnData3.push(user)
+          if (empType === user.emp_type) returnData3.push(user);
         }
       }
-    }
-    else returnData3 = returnData2;
+    } else returnData3 = returnData2;
     return returnData3;
   }
 }
