@@ -14,7 +14,7 @@ import {
 } from "react-icons/fa";
 import { VscSettings } from "react-icons/vsc";
 import { MdMail, MdOutlineClear } from "react-icons/md";
-import { IoIosLock, IoMdMail } from "react-icons/io";
+import { IoIosLock } from "react-icons/io";
 import countryList from "react-select-country-list";
 import DragFiles from "../../../Helper/DragFiles/DragFiles";
 import {
@@ -36,6 +36,8 @@ import Profile from "./Profile";
 import EmpAttendance from "./EmpAttendance";
 import EmpLeave from "./EmpLeave";
 import EmpProjects from "./EmpProjects";
+import { IoBriefcaseOutline, IoMailOutline } from "react-icons/io5";
+import useLongPress from "../../../Hooks/useLongPress";
 
 const Employees = () => {
   //States
@@ -48,134 +50,134 @@ const Employees = () => {
     {
       name: "Personal Information",
       icon: <FaUser />,
-      datas:(emp)=>[
+      datas: (emp) => [
         {
-          name:'First Name',
-          val:emp.first_name
+          name: "First Name",
+          val: emp.first_name,
         },
         {
-          name:'Last Name',
-          val:emp.last_name
+          name: "Last Name",
+          val: emp.last_name,
         },
         {
-          name:'Mobile Number',
-          val:emp.mobile_number
+          name: "Mobile Number",
+          val: emp.mobile_number,
         },
         {
-          name:'Email',
-          val:emp.email
+          name: "Email",
+          val: emp.email,
         },
         {
-          name:'Date of Birth',
-          val:emp.dob
+          name: "Date of Birth",
+          val: emp.dob,
         },
         {
-          name:'Marital Status',
-          val:emp.marital_status
+          name: "Marital Status",
+          val: emp.marital_status,
         },
         {
-          name:'Gender',
-          val:emp.gender
+          name: "Gender",
+          val: emp.gender,
         },
         {
-          name:'Country',
-          val:emp.country
+          name: "Country",
+          val: emp.country,
         },
         {
-          name:'Address',
-          val:emp.address
+          name: "Address",
+          val: emp.address,
         },
         {
-          name:'City',
-          val:emp.city
+          name: "City",
+          val: emp.city,
         },
         {
-          name:'State',
-          val:emp.state
+          name: "State",
+          val: emp.state,
         },
         {
-          name:'Zip Code',
-          val:emp.zip_code
+          name: "Zip Code",
+          val: emp.zip_code,
         },
-      ]
+      ],
     },
     {
       name: "Professional Information",
       icon: <FaBriefcase />,
-      datas:(emp)=>[
+      datas: (emp) => [
         {
-          name:'Employee ID',
-          val:emp.empId
+          name: "Employee ID",
+          val: emp.empId,
         },
         {
-          name:'User Name',
-          val:emp.user_name
+          name: "User Name",
+          val: emp.user_name,
         },
         {
-          name:'Employee Type',
-          val:emp.emp_type
+          name: "Employee Type",
+          val: emp.emp_type,
         },
         {
-          name:'Department',
-          val:emp.department
+          name: "Department",
+          val: emp.department,
         },
         {
-          name:'Designation',
-          val:emp.designation
+          name: "Designation",
+          val: emp.designation,
         },
         {
-          name:'Joining Date',
-          val:emp.joining_date
+          name: "Joining Date",
+          val: emp.joining_date,
         },
         {
-          name:'Office Location',
-          val:emp.office_location
+          name: "Office Location",
+          val: emp.office_location,
         },
-      ]
+      ],
     },
     {
       name: "Documents",
       icon: <MdMail />,
-      datas:(emp)=>[
+      datas: (emp) => [
         {
-          name:'Appointment Letter',
-          val:emp.appointment_letter
+          name: "Appointment Letter",
+          val: emp.appointment_letter,
         },
         {
-          name:'Salary Slip',
-          val:emp.salary_slips
+          name: "Salary Slip",
+          val: emp.salary_slips,
         },
         {
-          name:'Reliving Letter',
-          val:emp.reliving_letter
+          name: "Reliving Letter",
+          val: emp.reliving_letter,
         },
         {
-          name:'Experience Letter',
-          val:emp.experience_letter
+          name: "Experience Letter",
+          val: emp.experience_letter,
         },
-      ]
+      ],
     },
     {
       name: "Account Access",
       icon: <IoIosLock />,
-      datas:(emp)=>[
+      datas: (emp) => [
         {
-          name:'Linkedin ID',
-          val:emp.linkedin_url
+          name: "Linkedin ID",
+          val: emp.linkedin_url,
         },
         {
-          name:'Slack ID',
-          val:emp.slack_url
+          name: "Slack ID",
+          val: emp.slack_url,
         },
         {
-          name:'Skype ID',
-          val:emp.skype_url
+          name: "Skype ID",
+          val: emp.skype_url,
         },
         {
-          name:'Github ID',
-          val:emp.github_url
-        }
-      ]
+          name: "Github ID",
+          val: emp.github_url,
+        },
+      ],
     },
   ];
   const countryOptions = useMemo(() => countryList().getData(), []);
@@ -198,7 +200,7 @@ const Employees = () => {
     {
       name: "Profile",
       icon: <FaUser />,
-      component: <Profile pages={pages} emp={selectedEmployee}/>,
+      component: <Profile pages={pages} emp={selectedEmployee} />,
     },
     {
       name: "Attendance",
@@ -217,6 +219,12 @@ const Employees = () => {
     },
   ];
   const [viewComponent, setViewComponent] = useState(0);
+  //For Multidelete
+  const [showCheckBoxes, setShowCheckBoxes] = useState(false);
+  const [delArr, setDelArr] = useState([]);
+  const tableItemLongPressEvent = useLongPress(() => {
+    setShowCheckBoxes(true);
+  }, 500);
 
   //Methods
   const handleAddEmployee = async (e) => {
@@ -479,9 +487,18 @@ const Employees = () => {
     setViewEmp(true);
   };
 
+  const handleMultiDelete = async()=>{
+    setLoader(true);
+    await EmployeeService.delete(delArr);
+    toast.success(`Records deleted successfully.`);
+    setDelArr([]);
+    setShowCheckBoxes(false);
+    setLoader(false);
+  }
+
   //Rendering
   useEffect(() => {
-    if (!showAddModal && !showDeleteModal) {
+    if (!showAddModal && !showDeleteModal && !showCheckBoxes) {
       if (search.length > 0) {
         const timer = setTimeout(() => {
           handleChange();
@@ -489,12 +506,14 @@ const Employees = () => {
         return () => clearTimeout(timer);
       } else getEmployees();
     }
-  }, [showAddModal, showUpdateModal, search, showDeleteModal]);
+  }, [showAddModal, showUpdateModal, search, showDeleteModal,showCheckBoxes]);
 
   useEffect(() => {
     getDepartments();
     getEmpID();
   }, [showAddModal]);
+  useEffect(()=>{console.log(delArr)},[delArr])
+  //returning Statement
   if (showAddModal)
     return (
       <div className="modal emp">
@@ -1751,26 +1770,31 @@ const Employees = () => {
             <div className="content-box">
               <h3>{selectedEmployee.name}</h3>
               <h4>
-                <FaBriefcase /> {selectedEmployee.designation}
+                <IoBriefcaseOutline className="icon" />{" "}
+                {selectedEmployee.designation}
               </h4>
               <h4>
-                <IoMdMail /> {selectedEmployee.email}
+                <IoMailOutline className="icon" /> {selectedEmployee.email}
               </h4>
             </div>
           </div>
           <div className="btns">
-            <button onClick={()=>{
-              setViewEmp(false);
-              handleEditClick(selectedEmployee);
-            }}>
+            <button
+              onClick={() => {
+                handleEditClick(selectedEmployee);
+                setViewEmp(false);
+              }}
+            >
               <PiPencilLine />
               <h3>Edit Profile</h3>
             </button>
-            <button onClick={()=>{
-              setSelectedEmployee('');
-              setViewEmp(false);
-            }}>
-              <FaEye/>
+            <button
+              onClick={() => {
+                setSelectedEmployee("");
+                setViewEmp(false);
+              }}
+            >
+              <FaEye />
               <h3>View All</h3>
             </button>
           </div>
@@ -1796,9 +1820,9 @@ const Employees = () => {
   else
     return (
       <div className="Employee">
-        {filterData.searchEmpText === "" &&
-        filterData.empDepArr.length === 0 &&
-        filterData.empTypeArr.length === 0 ? (
+        {showCheckBoxes ? null : filterData.searchEmpText === "" &&
+          filterData.empDepArr.length === 0 &&
+          filterData.empTypeArr.length === 0 ? (
           <div className="top">
             <SearchBar
               value={search}
@@ -1825,6 +1849,25 @@ const Employees = () => {
             </div>
           </div>
         )}
+        {showCheckBoxes && !loader ? (
+          <div className="top">
+            <div className="btns">
+              {delArr.length>0?<button onClick={handleMultiDelete}>
+                <FaTrashAlt />
+                <h3>Delete</h3>
+              </button>:null}
+              <button
+                onClick={() => {
+                  setShowCheckBoxes(false);
+                  setDelArr([]);
+                }}
+              >
+                <MdOutlineClear />
+                <h3>Clear Selection</h3>
+              </button>
+            </div>
+          </div>
+        ) : null}
         {employees === "" || loader ? (
           <Loader size={50} fullHeight={true} fullWidth={true} />
         ) : employees.length === 0 ? (
@@ -1834,13 +1877,23 @@ const Employees = () => {
             <table>
               <thead>
                 <tr>
+                  {showCheckBoxes ? (
+                    <td>
+                      <CheckBox onChange={
+                        async(val)=>{
+                          if(val)setDelArr(await EmployeeService.getAllIDs());
+                          else setDelArr([]);
+                        }
+                      } />
+                    </td>
+                  ) : null}
                   <td>Employee Name</td>
                   <td>Employee ID</td>
                   <td>Department</td>
                   <td>Designation</td>
                   <td>Location</td>
                   <td>Type</td>
-                  <td>Action</td>
+                  {!showCheckBoxes ? <td>Action</td> : null}
                 </tr>
               </thead>
               <tbody>
@@ -1848,7 +1901,27 @@ const Employees = () => {
                   .sort((a, b) => a.empId.localeCompare(b.empId)) //sorting
                   .slice((page - 1) * itemsPerPage, page * itemsPerPage) //pagination
                   .map((emp, key) => (
-                    <tr key={key}>
+                    <tr
+                      key={key}
+                      {...tableItemLongPressEvent}
+                      className={delArr.includes(emp.id) ? "active" : ""}
+                    >
+                      {showCheckBoxes ? (
+                        <td>
+                          <CheckBox
+                            value={delArr.includes(emp.id)}
+                            onChange={(val) => {
+                              if (val) setDelArr((prev) => [...prev, emp.id]);
+                              else
+                                setDelArr((prev) => {
+                                  const arr = [...prev];
+                                  arr.splice(arr.indexOf(emp.id), 1);
+                                  return arr;
+                                });
+                            }}
+                          />
+                        </td>
+                      ) : null}
                       <td>
                         <div className="table-box">
                           <img src={emp.profile} alt="" />
@@ -1870,27 +1943,29 @@ const Employees = () => {
                       <td className="color-td">
                         <h3>{emp.emp_type}</h3>
                       </td>
-                      <td>
-                        <div className="table-box">
-                          <FaEye
-                            className="icon"
-                            onClick={() => handleViewClick(emp)}
-                          />
-                          <FaPencil
-                            onClick={() => handleEditClick(emp)}
-                            className="icon"
-                          />
-                          <FaTrashAlt
-                            onClick={() =>
-                              handleDeleteClick({
-                                name: emp.name,
-                                id: emp.id,
-                              })
-                            }
-                            className="icon"
-                          />
-                        </div>
-                      </td>
+                      {showCheckBoxes ? null : (
+                        <td>
+                          <div className="table-box">
+                            <FaEye
+                              className="icon"
+                              onClick={() => handleViewClick(emp)}
+                            />
+                            <FaPencil
+                              onClick={() => handleEditClick(emp)}
+                              className="icon"
+                            />
+                            <FaTrashAlt
+                              onClick={() =>
+                                handleDeleteClick({
+                                  name: emp.name,
+                                  id: emp.id,
+                                })
+                              }
+                              className="icon"
+                            />
+                          </div>
+                        </td>
+                      )}
                     </tr>
                   ))}
               </tbody>

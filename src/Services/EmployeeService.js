@@ -130,11 +130,6 @@ export default class EmployeeService extends Service {
     const all_users = await super.read("", "users");
 
     const users = Object.values(all_users).filter((x) => x.role === Roles.USER);
-    /*
-      [
-    {
-      name:'',..., departement:'2342398472'},{name:'}]
-    */
     const departmentPromises = users.map((x) =>
       DepartmentService.read(x.department).then((department) => ({
         ...x,
@@ -178,5 +173,9 @@ export default class EmployeeService extends Service {
       }
     } else returnData3 = returnData2;
     return returnData3;
+  }
+
+  static async getAllIDs(){
+    return (await this.getAllEmployees()).map(x=>x.id);
   }
 }

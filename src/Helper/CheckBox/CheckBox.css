@@ -19,7 +19,7 @@
     h3{
         font-size: .9rem;
         font-weight: 400;
-        color: var(--textColor-1);
+        color: #fff;
         text-transform: capitalize;
     }
 }

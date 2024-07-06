@@ -60,6 +60,236 @@
   }
 }
 
+.viewEmp{
+  width: 100%;
+  border: 1px solid var(--borderColor-1);
+  padding: 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 2rem;
+  border-radius: 10px;
+  .top{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid var(--borderColor-1);
+    padding-bottom: 1.5rem;
+    .profile-box{
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 1rem;
+      img{
+        width: 80px;
+        height: 80px;
+        border-radius: 10px;
+      }
+      .content-box{
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        align-self: flex-start;
+        gap: .5rem;
+        h3{
+          font-size: 1.2rem;
+          color: var(--textColor-1);
+          font-weight: 500;
+        }
+        h4{
+          font-size: .8rem;
+          color: var(--textColor-1);
+          font-weight: 300;
+          display: flex;
+          justify-items: flex-start;
+          gap: .5rem;
+          align-items: center;
+          .icon{
+            font-size: .9rem;
+          }
+        }
+      }
+    }
+    .btns{
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 1rem;
+      align-self: flex-end;
+      button{
+        background-color: var(--secColor-1);
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: var(--transition);
+        border: 1px solid var(--secColor-1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: .5rem;
+        h3{
+          font-size: .9rem;
+          font-weight: 300;
+        }
+      }
+      button:last-child{
+        color: var(--textColor-1);
+        background-color: transparent;
+        border: 1px solid var(--borderColor-1);
+      }
+      button:last-child:hover{
+        color: #fff;
+        background-color: var(--secColor-1);
+        border: 1px solid var(--secColor-1);
+      }
+      button:hover{
+        color: var(--textColor-1);
+        background-color: transparent;
+        border: 1px solid var(--borderColor-1);
+      }
+    }
+  }
+  .bottom{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items:flex-start;
+    gap: 2rem;
+    .nav-box{
+      width: 150px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      flex-direction: column;
+      border: 1px solid var(--borderColor-1);
+      border-radius: 10px;
+      overflow: hidden;
+      button{
+        width: 100%;
+        background-color: transparent;
+        border: none;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: .3rem;
+        color: var(--textColor-1);
+        font-size: .8rem;
+        padding: 10px;
+        transition: var(--transition);
+        cursor: pointer;
+        h3{
+          font-weight: 400;
+          font-size: .9rem;
+        }
+      }
+      button:hover,button.active{
+        background-color: var(--secColor-1);
+        color: #fff;
+      }
+    }
+    .comp-box{
+      width: calc(100% - 150px - 2rem);
+      .profile{
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 1rem;
+        .top-pages{
+          width: 100%;
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          gap:1rem;
+          border-bottom: 1px solid var(--borderColor-1);
+          button:nth-child(3){flex:1;}
+          button:nth-child(4){flex:1;}
+          button{
+            display: flex;
+            border: none;
+            justify-content: center;
+            align-items: center;
+            gap: .5rem;
+            background-color: transparent;
+            padding: 5px 0;
+            border-bottom: 2px solid transparent;
+            color: var(--textColor-1);
+            font-size: .8rem;
+            transition: var(--transition);
+            cursor: pointer;
+            h3{
+              font-weight: 400;
+              font-size: .9rem;
+            }
+          }
+          button.active,button:hover{
+            color: var(--secColor-1);
+            border-bottom: 2px solid var(--secColor-1);
+          }
+        }
+        .bottom-pages{
+          display: flex;
+          justify-content: flex-start;
+          align-items: flex-start;
+          gap: 1rem;
+          width: 100%;
+          flex-wrap: wrap;
+          .viewDataContent{
+            width: calc(50% - .5rem);
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            flex-direction: column;
+            gap: .5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--borderColor-1);
+            h3{
+              font-size: .8rem;
+              font-weight: 300;
+              color: var(--textColor-2);
+            }
+            h4{
+              font-size: .9rem;
+              font-weight: 300;
+              color: var(--textColor-1);
+            }
+          }
+          .downloadDataContent{
+            width: calc(50% - .5rem);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding:10px;
+            border: 1px solid var(--borderColor-1);
+            color: var(--textColor-1);
+            border-radius: 5px;
+            a{
+              color: var(--textColor-1);
+              font-size: 1.2rem;
+              transition: var(--transition);
+            }
+            a:hover{
+              color: var(--secColor-1);
+            }
+            h3{
+              font-size: .9rem;
+              font-weight: 300;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 .emp.modal {
   .add {
     min-height: 90%;

@@ -14,7 +14,11 @@ const Profile = ({ emp, pages }) => {
         <div className="top-pages">
           {pages.map((nav, idx) =>
             checkIsSingleDataExist(nav.datas(emp), "val") ? (
-              <button key={idx} onClick={() => setPage(idx)}>
+              <button
+                className={page === idx ? "active" : ""}
+                key={idx}
+                onClick={() => setPage(idx)}
+              >
                 {nav.icon}
                 <h3>{nav.name}</h3>
               </button>
@@ -22,23 +26,23 @@ const Profile = ({ emp, pages }) => {
           )}
         </div>
         <div className="bottom-pages">
-          <div className="viewData">
             {pages[page].datas(emp).map((x, idx) => {
               if (!x.val) return null;
-              if(page===3)return(
-                <div key={idx} className="downloadDataContent">
+              if (page === 3)
+                return (
+                  <div key={idx} className="downloadDataContent">
                     <h3>{x.name}</h3>
                     <a href={x.val} target="_blank">
                       <FaEye />
                     </a>
                   </div>
-              )
+                );
               else if (page === 2)
                 return (
                   <div key={idx} className="downloadDataContent">
                     <h3>{x.name}</h3>
                     <a href={x.val} target="_blank">
-                      <IoMdCloudDownload />
+                      <IoMdCloudDownload/>
                     </a>
                   </div>
                 );
@@ -50,7 +54,6 @@ const Profile = ({ emp, pages }) => {
                   </div>
                 );
             })}
-          </div>
         </div>
       </div>
     );

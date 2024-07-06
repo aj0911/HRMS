@@ -169,6 +169,7 @@ export const deleteFile = async (file_url) => {
     try {
       const deleteRef = ref(
         storage,
+        //try to change it
         file_url.slice(file_url.indexOf(".com/o/") + 7, file_url.indexOf("?"))
       );
       await deleteObject(deleteRef)

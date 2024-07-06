@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import "./CheckBox.css";
 
 const CheckBox = ({
@@ -7,28 +7,33 @@ const CheckBox = ({
   textStyle = {},
   size = 15,
   value = false,
-  onChange=()=>{},
-  className=''
+  onChange = () => {},
+  className = "",
 }) => {
   //states
   const [checked, setChecked] = useState(value);
-  const isInitialMount = useRef(true);
 
   //methods
-  const handleChecking = () => setChecked((prev) => !prev);
+  const handleChecking = () => {
+    setChecked((prev) =>{
+      onChange(!prev);
+      return !prev;
+    });
+  };
 
-  //Rendering
-  useEffect(()=>{
-    if(isInitialMount.current)isInitialMount.current = false;
-    else onChange(checked)
-  },[checked])
+  useEffect(()=>{setChecked(value)},[value])
+
   return (
-    <div style={style} onClick={handleChecking} className={`checkbox-container ${className}`}>
+    <div
+      style={style}
+      onClick={handleChecking}
+      className={`checkbox-container ${className}`}
+    >
       <div
         style={{ width: size, height: size }}
         className={`checkbox ${checked ? "active" : ""}`}
       >
-        {checked ? <p style={{fontSize:size}}>&#10003;</p> : null}
+        {checked ? <p style={{ fontSize: size }}>&#10003;</p> : null}
       </div>
       <h3 style={textStyle}>{text}</h3>
     </div>
