@@ -253,12 +253,15 @@
         thead{
           tr{
             width: 100%;
-            >td{
+            td{
               font-size: .8rem;
               padding: 10px;
               text-align: center;
               color: var(--textColor-2);
               border-bottom: 1px solid var(--borderColor-1);
+              .checkbox-container{
+                color:#fff
+              }
             }
           }
         }
@@ -283,6 +286,9 @@
               >h3{
                 font-size: .8rem;
                 font-weight: 400;
+              }
+              .checkbox-container{
+                color:#fff
               }
               .table-box{
                 display: flex;
@@ -731,6 +737,11 @@
           .search {
             display: none;
           }
+        }
+      }
+      .box{
+        .bottom{
+          overflow-x: scroll;
         }
       }
     }

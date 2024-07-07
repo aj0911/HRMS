@@ -1,6 +1,11 @@
 import emailjs from "@emailjs/browser";
 import bcrypt from "bcryptjs";
-import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 import { storage } from "../firebase";
 
 export const Constants = {
@@ -89,7 +94,7 @@ export const greeting = () => {
   return greets[2];
 };
 
-export const sendDesktopNotification = () => { };
+export const sendDesktopNotification = () => {};
 
 export const EMPLOYEE_TYPES = {
   FULL_TIME_EMPLOYEES: "Full-Time",
@@ -123,7 +128,7 @@ export const validateForm = (...formInputs) => {
 };
 
 export const uploadFile = async (file) => {
-  if ((typeof file) == 'string') return file;
+  if (typeof file == "string") return file;
   if (file) {
     try {
       const fileName = new Date().getTime() + file.name;
@@ -154,7 +159,7 @@ export const uploadFile = async (file) => {
       });
 
       const downloadURL = await getDownloadURL(uploadTaskSnapshot.ref);
-      console.log('file uploaded')
+      console.log("file uploaded");
       return downloadURL;
     } catch (error) {
       console.log(error.message);
@@ -164,33 +169,35 @@ export const uploadFile = async (file) => {
 };
 
 export const deleteFile = async (file_url) => {
-  console.log(file_url)
+  console.log(file_url);
   if (file_url) {
     try {
-      const deleteRef = ref(
-        storage,
-        //try to change it
-        file_url.slice(file_url.indexOf(".com/o/") + 7, file_url.indexOf("?"))
-      );
-      await deleteObject(deleteRef)
-      console.log('file deleted')
-    }
-    catch (error) {
+      const baseUrl =
+        "https://firebasestorage.googleapis.com/v0/b/hrms-f43a4.appspot.com/o/";
+      const startIndex = baseUrl.length;
+      const endIndex = file_url.indexOf("?"); // URL query parameters start with '?'
+      const path = file_url
+        .substring(startIndex, endIndex)
+        .replace(/%2F/g, "/"); // Decode URL-encoded slashes
+      const deleteRef = ref(storage, path);
+      await deleteObject(deleteRef);
+      console.log("file deleted");
+    } catch (error) {
       console.log(error.message);
     }
   }
 };
 
-export const userAlreadyExistInData = (data,userID)=>{
-  for(let user of data){
-    if(user.id ===userID)return true;
+export const userAlreadyExistInData = (data, userID) => {
+  for (let user of data) {
+    if (user.id === userID) return true;
   }
   return false;
-}
+};
 
-export const checkIsSingleDataExist = (arr,parameter)=>{
-  for(let x of arr){
-    if(x[parameter])return true;
+export const checkIsSingleDataExist = (arr, parameter) => {
+  for (let x of arr) {
+    if (x[parameter]) return true;
   }
   return false;
-}
+};

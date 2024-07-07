@@ -512,6 +512,7 @@ const Employees = () => {
     getDepartments();
     getEmpID();
   }, [showAddModal]);
+
   useEffect(()=>{console.log(delArr)},[delArr])
   //returning Statement
   if (showAddModal)
@@ -1879,7 +1880,8 @@ const Employees = () => {
                 <tr>
                   {showCheckBoxes ? (
                     <td>
-                      <CheckBox onChange={
+                      <CheckBox
+                       onChange={
                         async(val)=>{
                           if(val)setDelArr(await EmployeeService.getAllIDs());
                           else setDelArr([]);

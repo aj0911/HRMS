@@ -50,7 +50,7 @@ const Profile = ({ emp, pages }) => {
                 return (
                   <div key={idx} className="viewDataContent">
                     <h3>{x.name}</h3>
-                    <h4>{x.val}</h4>
+                    <p>{x.val}</p>
                   </div>
                 );
             })}

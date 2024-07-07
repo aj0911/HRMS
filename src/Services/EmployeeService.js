@@ -94,6 +94,7 @@ export default class EmployeeService extends Service {
     const all_users = (await this.getAllEmployees()).sort((a, b) =>
       a.empId.localeCompare(b.empId)
     );
+    if(all_users.length===0)return `001`;
     const length = Number(all_users[all_users.length-1].empId.split("-")[1])+1;
     if (length >= 0 && length <= 9) return `00${length}`;
     if (length >= 10 && length <= 99) return `0${length}`;
