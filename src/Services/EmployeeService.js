@@ -114,6 +114,7 @@ export default class EmployeeService extends Service {
 
     return userExists;
   }
+
   static async checkEmailExist(email) {
     const all_users = await super.read("", "users");
     let userExists = false;
@@ -178,5 +179,19 @@ export default class EmployeeService extends Service {
 
   static async getAllIDs(){
     return (await this.getAllEmployees()).map(x=>x.id);
+  }
+
+  static async getEmployeeByDepartments(){
+    const all_users = Object.values(await super.read('','users'));
+    const all_departments_ids = Object.keys(await super.read('','departments'));
+    const usersByDeps = {};
+    all_departments_ids.forEach(depID=>{
+      const users = [];
+      all_users.forEach(user=>{
+        if(user.department===depID && user.role === Roles.USER)users.push(user);
+      })
+      usersByDeps[depID] = users;
+    })
+    return usersByDeps;
   }
 }

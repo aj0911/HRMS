@@ -223,6 +223,7 @@ const Employees = () => {
   const [showCheckBoxes, setShowCheckBoxes] = useState(false);
   const [delArr, setDelArr] = useState([]);
   const tableItemLongPressEvent = useLongPress(() => {
+    if(window.innerWidth>999)
     setShowCheckBoxes(true);
   }, 500);
 
@@ -1924,29 +1925,29 @@ const Employees = () => {
                           />
                         </td>
                       ) : null}
-                      <td>
+                      <td data-name={'Employee Name'}>
                         <div className="table-box">
                           <img src={emp.profile} alt="" />
                           <h3>{emp.name}</h3>
                         </div>
                       </td>
-                      <td>
+                      <td data-name={'Employee ID'}>
                         <h3>{emp.empId}</h3>
                       </td>
-                      <td>
+                      <td data-name={'Department'}>
                         <h3>{emp.department}</h3>
                       </td>
-                      <td>
+                      <td data-name={'Designation'}>
                         <h3>{emp.designation}</h3>
                       </td>
-                      <td>
+                      <td data-name={'Location'}>
                         <h3>{emp.office_location}</h3>
                       </td>
-                      <td className="color-td">
+                      <td data-name={'Type'} className="color-td">
                         <h3>{emp.emp_type}</h3>
                       </td>
                       {showCheckBoxes ? null : (
-                        <td>
+                        <td data-name={'Actions'}>
                           <div className="table-box">
                             <FaEye
                               className="icon"

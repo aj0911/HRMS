@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./Departments.css";
 import SearchBar from "../../../Helper/SearchBar/SearchBar";
-import { FaPlusCircle } from "react-icons/fa";
+import { FaAngleRight, FaPlusCircle } from "react-icons/fa";
 import toast from "react-hot-toast";
 import DepartmentService from "../../../Services/DepartmentService";
 import Loader from "../../Loader/Loader";
+import EmployeeService from "../../../Services/EmployeeService";
 
 const Departments = () => {
   //States
@@ -13,6 +14,7 @@ const Departments = () => {
   const [departments, setDepartments] = useState(null);
   const [loader, setLoader] = useState(false);
   const [text, setText] = useState("");
+  const [empByDepObj, setEmpByDepObj] = useState([]);
 
   //Functions
   const handleAdd = async (e) => {
@@ -51,6 +53,12 @@ const Departments = () => {
     setLoader(false);
   };
 
+  const getEmployeeByDepartments = async () => {
+    setLoader(true);
+    setEmpByDepObj(await EmployeeService.getEmployeeByDepartments());
+    setLoader(false);
+  };
+
   useEffect(() => {
     if (!showAddModal) {
       if (text.length > 0) {
@@ -58,7 +66,10 @@ const Departments = () => {
           handleChange();
         }, 500);
         return () => clearTimeout(timer);
-      } else getAllDepartments();
+      } else {
+        getAllDepartments();
+        getEmployeeByDepartments();
+      }
     }
   }, [showAddModal, text]);
 
@@ -80,21 +91,35 @@ const Departments = () => {
               <h3 className="empty-text-signal">No Department is added!!</h3>
             ) : (
               departments
-                .sort((a,b)=>a.name.localeCompare(b.name))
-                .map((department, key) => (
-                  <div className="department" key={key}>
-                    <div className="header">
-                      <div className="content">
-                        <h3>{department?.name}</h3>
-                        <h5>{department?.employees?.length || 0} Members</h5>
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((department, key) => {
+                  const empArr = empByDepObj[department.id];
+                  return (
+                    <div className="department" key={key}>
+                      <div className="header">
+                        <div className="content">
+                          <h3>{department?.name}</h3>
+                          <h5>{empArr?.length || 0} Members</h5>
+                        </div>
+                        <h3>View All</h3>
                       </div>
-                      <h3>View All</h3>
+                      <div className="employees">
+                        {empArr?.slice(0, 5).map((emp, idx) => (
+                          <div key={idx} className="emp">
+                            <div className="profile-div">
+                              <img src={emp.profile} />
+                              <div className="content-div">
+                                <h3>{emp.name}</h3>
+                                <h5>{emp.designation}</h5>
+                              </div>
+                            </div>
+                            <FaAngleRight />
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    {department?.employees?.length === 0 ? (
-                      <div className="employees"></div>
-                    ) : null}
-                  </div>
-                ))
+                  );
+                })
             )}
           </div>
         )}
