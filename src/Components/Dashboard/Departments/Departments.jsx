@@ -117,6 +117,10 @@ const Departments = () => {
           val: emp.designation,
         },
         {
+          name: "CTC in LPA",
+          val: emp.ctc,
+        },
+        {
           name: "Joining Date",
           val: emp.joining_date,
         },
@@ -275,6 +279,7 @@ const Departments = () => {
       }
     }
   }, [showAddModal, text]);
+  
   if (viewEmp.isShow)
     return (
       <div className="viewEmp">

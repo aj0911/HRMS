@@ -126,6 +126,10 @@ const Employees = () => {
           val: emp.designation,
         },
         {
+          name: "CTC in LPA",
+          val: emp.ctc,
+        },
+        {
           name: "Joining Date",
           val: emp.joining_date,
         },
@@ -267,6 +271,7 @@ const Employees = () => {
           data.emp_type,
           data.department,
           data.designation,
+          data.ctc,
           data.joining_date,
           data.office_location
         );
@@ -332,6 +337,7 @@ const Employees = () => {
           selectedEmployee.emp_type,
           selectedEmployee.department,
           selectedEmployee.designation,
+          selectedEmployee.ctc,
           selectedEmployee.joining_date,
           selectedEmployee.office_location
         );
@@ -811,6 +817,17 @@ const Employees = () => {
                         placeholder="Enter Designation"
                       />
                       <input
+                        type="number"
+                        value={data.ctc}
+                        onChange={(e) =>
+                          setData({
+                            ...data,
+                            ctc: e.target.value,
+                          })
+                        }
+                        placeholder="Enter CTC in LPA"
+                      />
+                      <input
                         type="text"
                         placeholder="Select Joining Date"
                         value={data.joining_date}
@@ -830,7 +847,7 @@ const Employees = () => {
                       <select
                         className={`${
                           data.office_location ? "" : "placeholder"
-                        } full-input`}
+                        }`}
                         onChange={(e) => {
                           if (e.target.value === "-1")
                             e.target.classList.add("placeholder");
@@ -1400,6 +1417,17 @@ const Employees = () => {
                         placeholder="Enter Designation"
                       />
                       <input
+                        type="number"
+                        value={selectedEmployee.ctc}
+                        onChange={(e) =>
+                          setSelectedEmployee({
+                            ...selectedEmployee,
+                            ctc: e.target.value,
+                          })
+                        }
+                        placeholder="Enter CTC in LPA"
+                      />
+                      <input
                         type="text"
                         placeholder="Select Joining Date"
                         value={selectedEmployee.joining_date}
@@ -1419,7 +1447,7 @@ const Employees = () => {
                       <select
                         className={`${
                           selectedEmployee.office_location ? "" : "placeholder"
-                        } full-input`}
+                        }`}
                         onChange={(e) => {
                           if (e.target.value === "-1")
                             e.target.classList.add("placeholder");

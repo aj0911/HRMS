@@ -201,3 +201,54 @@ export const checkIsSingleDataExist = (arr, parameter) => {
   }
   return false;
 };
+
+export function formatDate(inputDate) {
+  // Create a new Date object (month - 1 because JavaScript months are 0-indexed)
+  var date = new Date(inputDate);
+
+  // Array of month names
+  var monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  // Get the month name from the array based on the month index of the date object
+  var monthName = monthNames[date.getMonth()];
+
+  // Get the day of the month
+  var day = date.getDate();
+
+  // Get the full year
+  var year = date.getFullYear();
+
+  // Return formatted date string
+  return monthName + " " + day + ", " + year;
+}
+
+export const getDay = (inputDate) => {
+  var date = new Date(inputDate);
+
+  // Array of day names
+  var dayNames = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
+  // Get the day name from the array based on the day index of the date object
+  return dayNames[date.getDay()];
+};
