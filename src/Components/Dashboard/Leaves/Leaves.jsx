@@ -155,6 +155,7 @@ const Leaves = () => {
     setMaxPage(
       Math.floor(perPage) === perPage ? perPage : Math.floor(perPage) + 1
     );
+    setPage(1);
     setLoader(false);
   };
   const handleMultiDelete = async () => {
@@ -162,6 +163,7 @@ const Leaves = () => {
     await LeaveService.delete(delArr);
     toast.success("Leaves Deleted Successfully");
     await getAllLeaves();
+    setPage(1);
     setText("");
     setShowCheckBoxes(false);
     setLoader(false);
@@ -171,6 +173,7 @@ const Leaves = () => {
     await LeaveService.delete([deleteModal.data?.id]);
     toast.success("Leave Request Deleted Successfully");
     setDeleteModal({ isShow: false, data: {} });
+    setPage(1);
     setLoader(false);
   };
 
@@ -237,7 +240,7 @@ const Leaves = () => {
                           style={{
                             borderLeft: `5px solid var(--${
                               leave.status === LEAVE_STATUS.PENDING
-                                ? "pannelHoverColor"
+                                ? "textColor-2"
                                 : leave.status === LEAVE_STATUS.ACCEPT
                                 ? "toggleBtn"
                                 : "textColor-3"
@@ -261,22 +264,19 @@ const Leaves = () => {
                         <td data-name={"Leave Type"}>
                           <h3>{leave.leave_type}</h3>
                         </td>
-                        <td
-                          data-name={"Status"}
-                          style={{
-                            backgroundColor: `var(--${
-                              leave.status === LEAVE_STATUS.PENDING
-                                ? "pannelHoverColor"
-                                : leave.status === LEAVE_STATUS.ACCEPT
-                                ? "toggleBtn"
-                                : "textColor-3"
-                            })`,
-                          }}
-                        >
-                          <h3>{leave.status}</h3>
+                        <td data-name={"Status"} className="color-td">
+                          <h3
+                          >
+                            {leave.status}
+                          </h3>
                         </td>
                         <td data-name={"Actions"}>
-                          <div className="table-box">
+                          <div
+                            style={{
+                              flexDirection: "column",
+                            }}
+                            className="table-box"
+                          >
                             {leave.status === LEAVE_STATUS.PENDING ? (
                               <>
                                 <button
@@ -336,7 +336,7 @@ const Leaves = () => {
             </table>
             <div className="keys">
               {[
-                { name: "Pending", color: `var(--pannelHoverColor)` },
+                { name: "Pending", color: `var(--textColor-2)` },
                 { name: "Accepted", color: `var(--toggleBtn)` },
                 { name: "Rejected", color: `var(--textColor-3)` },
               ].map((x, idx) => (
@@ -677,7 +677,7 @@ const Leaves = () => {
                             style={{
                               borderLeft: `5px solid var(--${
                                 leave.status === LEAVE_STATUS.PENDING
-                                  ? "pannelHoverColor"
+                                  ? "textColor-2"
                                   : leave.status === LEAVE_STATUS.ACCEPT
                                   ? "toggleBtn"
                                   : "textColor-3"
@@ -698,19 +698,11 @@ const Leaves = () => {
                           <td data-name={"Leave Type"}>
                             <h3>{leave.leave_type}</h3>
                           </td>
-                          <td
-                            data-name={"Status"}
-                            style={{
-                              backgroundColor: `var(--${
-                                leave.status === LEAVE_STATUS.PENDING
-                                  ? "pannelHoverColor"
-                                  : leave.status === LEAVE_STATUS.ACCEPT
-                                  ? "toggleBtn"
-                                  : "textColor-3"
-                              })`,
-                            }}
-                          >
-                            <h3>{leave.status}</h3>
+                          <td data-name={"Status"} className="color-td">
+                            <h3
+                            >
+                              {leave.status}
+                            </h3>
                           </td>
                           {showCheckBoxes ? null : (
                             <td data-name={"Actions"}>
@@ -746,7 +738,7 @@ const Leaves = () => {
               </table>
               <div className="keys">
                 {[
-                  { name: "Pending", color: `var(--pannelHoverColor)` },
+                  { name: "Pending", color: `var(--textColor-2)` },
                   { name: "Accepted", color: `var(--toggleBtn)` },
                   { name: "Rejected", color: `var(--textColor-3)` },
                 ].map((x, idx) => (

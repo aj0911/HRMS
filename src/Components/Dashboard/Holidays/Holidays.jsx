@@ -93,6 +93,7 @@ const Holidays = () => {
     setMaxPage(
       Math.floor(perPage) === perPage ? perPage : Math.floor(perPage) + 1
     );
+    setPage(1);
     setLoader(false);
   };
   const handleMultiDelete = async () => {
@@ -100,6 +101,7 @@ const Holidays = () => {
     await HolidayService.delete(delArr);
     toast.success("Holidays Deleted Successfully");
     await getAllHolidays();
+    setPage(1);
     setText('');
     setShowCheckBoxes(false);
     setLoader(false);
@@ -109,6 +111,7 @@ const Holidays = () => {
     await HolidayService.delete([deleteModal.data?.id]);
     toast.success("Holiday Deleted Successfully");
     setDeleteModal({ isShow: false, data: {} });
+    setPage(1);
     setLoader(false);
   };
 

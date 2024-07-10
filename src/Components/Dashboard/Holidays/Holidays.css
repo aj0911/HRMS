@@ -5,6 +5,8 @@
             justify-content: flex-start;
             align-items: center;
             gap: 1rem;
+            width:100%;
+            margin-bottom: 1rem;
             .key{
                 display: flex;
                 justify-content: flex-start;
@@ -28,4 +30,28 @@
     background-color: var(--secColor-1);
     border-color: var(--secColor-1);
     color: #fff;
+}
+
+@media screen and (max-width:999px) {
+    .Employee{
+        .bottom{
+            .keys{
+                justify-content: center;
+            }
+        }
+    }
+}
+
+@media screen and (max-width:599px) {
+    .Employee{
+        .bottom{
+            .keys{
+                flex-direction: column;
+                gap: .5rem;
+            }
+        }
+    }
+    #addBtn{
+        width: 100%;
+    }
 }
