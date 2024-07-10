@@ -94,7 +94,7 @@ export const greeting = () => {
   return greets[2];
 };
 
-export const sendDesktopNotification = () => {};
+export const sendDesktopNotification = () => { };
 
 export const EMPLOYEE_TYPES = {
   FULL_TIME_EMPLOYEES: "Full-Time",
@@ -252,3 +252,42 @@ export const getDay = (inputDate) => {
   // Get the day name from the array based on the day index of the date object
   return dayNames[date.getDay()];
 };
+
+export const LEAVE_TYPES = {
+  PAID_LEAVES: [
+    "Sick Leave",
+    "Casual Leave",
+    "Annual Leave (or Paid Time Off)",
+    "Maternity/Paternity Leave",
+    "Parental Leave",
+    "Bereavement Leave",
+    "Compensatory Leave",
+    "Public Holidays"
+  ],
+  UNPAID_LEAVES: [
+    "Unpaid Leave",
+    "Study Leave",
+    "Sabbatical Leave"
+  ]
+};
+
+export const LEAVE_STATUS = {
+  ACCEPT: 'Accept',
+  REJECT: 'Reject',
+  PENDING: 'Pending'
+}
+
+export const getDiffDays = (dt1, dt2) => {
+  const startDate = new Date(dt1);
+  const endDate = new Date(dt2);
+
+  // Calculate the difference in time
+  const timeDifference = endDate - startDate;
+
+  // Convert the time difference from milliseconds to days
+  const millisecondsPerDay = 1000 * 60 * 60 * 24;
+  const dayDifference = timeDifference / millisecondsPerDay;
+  return dayDifference + 1
+}
+
+

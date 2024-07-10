@@ -27,4 +27,5 @@
 #addBtn{
     background-color: var(--secColor-1);
     border-color: var(--secColor-1);
+    color: #fff;
 }
