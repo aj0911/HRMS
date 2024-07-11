@@ -1,7 +1,9 @@
+import AttendanceService from "./AttendanceService";
 import Service from "./Service"
 
 export default class HolidayService extends Service{
     static async create(entity) {
+        await AttendanceService.giveHoliday(entity.date);
         return super.create(entity, "holidays");
       }
     
@@ -10,10 +12,16 @@ export default class HolidayService extends Service{
       }
     
       static async update(id, entity) {
-        return super.update(id, entity, "holidays");
+        await AttendanceService.cancelHoliday(entity.prevHolidayDate);
+        await AttendanceService.giveHoliday(entity.date);
+        return super.update(id, {...entity,prevHolidayDate:null}, "holidays");
       }
     
       static async delete(idArr) {
+        for(let id of idArr){
+          const holiday = await this.read(id);
+          await AttendanceService.cancelHoliday(holiday.date);
+        }
         return super.delete(idArr, "holidays");
       }
     

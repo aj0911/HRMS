@@ -73,7 +73,7 @@ const Holidays = () => {
   };
   const getAllHolidays = async () => {
     setLoader(true);
-    const val = Object.values(await HolidayService.read() || []);
+    const val = Object.values((await HolidayService.read()) || []);
     setHolidays(val);
     const perPage = val.length / itemsPerPage;
     setMaxPage(
@@ -102,7 +102,7 @@ const Holidays = () => {
     toast.success("Holidays Deleted Successfully");
     await getAllHolidays();
     setPage(1);
-    setText('');
+    setText("");
     setShowCheckBoxes(false);
     setLoader(false);
   };
@@ -377,7 +377,10 @@ const Holidays = () => {
                                 onClick={() => {
                                   setEditModal({
                                     isShow: true,
-                                    data: holiday,
+                                    data: {
+                                      ...holiday,
+                                      prevHolidayDate: holiday.date,
+                                    },
                                   });
                                 }}
                                 className="icon"

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import "./Leaves.css";
 import SearchBar from "../../../Helper/SearchBar/SearchBar";
 import {
   FaAngleLeft,

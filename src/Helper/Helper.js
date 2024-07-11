@@ -290,4 +290,9 @@ export const getDiffDays = (dt1, dt2) => {
   return dayDifference + 1
 }
 
+export const ATTENDANCE_OPTIONS = {
+  PRESENT:'Present',
+  ABSENT:'Absent'
+}
+
 
