@@ -132,7 +132,8 @@ const Attendance = () => {
             <thead>
               <tr>
                 <td>Employee Name</td>
-                <td>Employee ID</td>
+                <td>Desgination</td>
+                <td>Office Location</td>
                 <td>Date</td>
                 <td>Status</td>
                 <td>Mark Attendance</td>
@@ -143,7 +144,6 @@ const Attendance = () => {
                 .sort((a, b) => a.empId.localeCompare(b.empId)) //sorting
                 .slice((page - 1) * itemsPerPage, page * itemsPerPage) //pagination
                 .map((emp, key) => {
-                  console.log(emp, date);
                   return (
                     <tr key={key}>
                       <td
@@ -164,8 +164,11 @@ const Attendance = () => {
                           <h3>{emp.name}</h3>
                         </div>
                       </td>
-                      <td data-name={"Employee ID"}>
-                        <h3>{emp.empId}</h3>
+                      <td data-name={"Designation"}>
+                        <h3>{emp.designation}</h3>
+                      </td>
+                      <td data-name={"Office Location"}>
+                        <h3>{emp.office_location}</h3>
                       </td>
                       <td data-name={"Date"}>
                         <h3>{formatDate(date)}</h3>

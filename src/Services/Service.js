@@ -1,10 +1,11 @@
 import { child, get, ref, remove, set, update } from "firebase/database";
 import { db } from "../firebase";
 import { uid } from "uid";
+import { ATTENDANCE_OPTIONS } from "../Helper/Helper";
 
 export default class Service {
   //Create one only
-  static async create(entity, modelName, createSetting = false) {
+  static async create(entity, modelName, createSetting = false, createHolidays = false) {
     try {
       const id = uid();
       const data = await set(ref(db, `${modelName}/${id}`), {
@@ -22,6 +23,23 @@ export default class Service {
           id: settingId,
           timeStamp: Date.now(),
         });
+      }
+      if (createHolidays) {
+        const holidays = await get(child(ref(db), `holidays`))
+        if (holidays.exists()) {
+          for (let holiday of Object.values(holidays.val())) {
+            console.log(holiday)
+            const h_id = uid();
+            await set(ref(db, `${'attendance'}/${h_id}`), {
+              id: h_id,
+              user: id,
+              status: ATTENDANCE_OPTIONS.PRESENT,
+              date: holiday.date,
+              isHoliday: true,
+              timeStamp: Date.now(),
+            })
+          }
+        }
       }
       return data;
     } catch (error) {

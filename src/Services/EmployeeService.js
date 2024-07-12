@@ -1,10 +1,8 @@
 import {
-  EMPLOYEE_TYPES,
   Roles,
   deleteFile,
   encryptData,
   uploadFile,
-  userAlreadyExistInData,
 } from "../Helper/Helper";
 import DepartmentService from "./DepartmentService";
 import Service from "./Service";
@@ -25,6 +23,7 @@ export default class EmployeeService extends Service {
         name: `${entity.first_name} ${entity.last_name}`,
       },
       "users",
+      true,
       true
     );
   }
