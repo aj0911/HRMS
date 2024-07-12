@@ -295,4 +295,9 @@ export const ATTENDANCE_OPTIONS = {
   ABSENT:'Absent'
 }
 
+export const convertToDoubleDigit = (num)=>{
+  if(num>=0 && num<=9)return `0${num}`;
+  return `${num}`;
+}
+
 

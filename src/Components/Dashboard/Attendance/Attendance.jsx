@@ -77,8 +77,8 @@ const Attendance = () => {
       await AttendanceService.create(data);
       toast.success("Attendance Status Marked to " + data.status);
     }
-    if(text) await handleChange()
-    else await getAllEmployees()
+    if (text) await handleChange();
+    else await getAllEmployees();
     setLoader(false);
   };
 
@@ -109,11 +109,14 @@ const Attendance = () => {
             onBlur={(e) => {
               if (e.target.value == "") e.target.type = "text";
             }}
-            onChange={(e) => setDate(prev=>{
-              if((new Date(e.target.value))<=(new Date(Date.now())))return e.target.value;
-              toast.error(`You can't mark an attendance for future.`)
-              return prev;
-            })}
+            onChange={(e) =>
+              setDate((prev) => {
+                if (new Date(e.target.value) <= new Date(Date.now()))
+                  return e.target.value;
+                toast.error(`You can't mark an attendance for future.`);
+                return prev;
+              })
+            }
           />
         </div>
       </div>
@@ -121,9 +124,9 @@ const Attendance = () => {
         <Loader fullWidth={true} size={50} />
       ) : date === "" ? (
         <h3 className="empty-text-signal">Select a Date First</h3>
-      ) : employees.length===0?(
+      ) : employees.length === 0 ? (
         <h3 className="empty-text-signal">No Employee is here!!</h3>
-      ):(
+      ) : (
         <div className="bottom">
           <table>
             <thead>
@@ -168,72 +171,86 @@ const Attendance = () => {
                         <h3>{formatDate(date)}</h3>
                       </td>
                       <td data-name={"Status"} className="color-td">
-                        <h3>{emp.attendance?.isHoliday?'Holiday':emp.attendance?.status || 'Not Marked'}</h3>
+                        <h3>
+                          {emp.attendance?.isHoliday
+                            ? "Holiday"
+                            :emp.attendance?.isLeave
+                            ? "Leave": emp.attendance?.status || "Not Marked"}
+                        </h3>
                       </td>
                       <td data-name={"Mark Attendance"}>
-                        {emp.attendance?.isHoliday? <h3>#</h3> :<div className="table-box">
-                          {emp.attendance ? (
-                            emp.attendance.status ===
-                            ATTENDANCE_OPTIONS.PRESENT ? (
-                              <button
-                                style={{
-                                  backgroundColor: "var(--textColor-3)",
-                                }}
-                                onClick={() =>
-                                  markAttendance({
-                                    status: ATTENDANCE_OPTIONS.ABSENT,
-                                    user: emp.id,
-                                    date,
-                                  })
-                                }
-                              >
-                                A
-                              </button>
+                        {emp.attendance?.isHoliday ||
+                        emp.attendance?.isLeave ? (
+                          <h3>#</h3>
+                        ) : (
+                          <div className="table-box">
+                            {emp.attendance ? (
+                              emp.attendance.status ===
+                              ATTENDANCE_OPTIONS.PRESENT ? (
+                                <button
+                                  style={{
+                                    backgroundColor: "var(--textColor-3)",
+                                  }}
+                                  onClick={() =>
+                                    markAttendance({
+                                      status: ATTENDANCE_OPTIONS.ABSENT,
+                                      user: emp.id,
+                                      date,
+                                    })
+                                  }
+                                >
+                                  A
+                                </button>
+                              ) : (
+                                <button
+                                  style={{
+                                    backgroundColor: "var(--secColor-1)",
+                                  }}
+                                  onClick={() =>
+                                    markAttendance({
+                                      status: ATTENDANCE_OPTIONS.PRESENT,
+                                      user: emp.id,
+                                      date,
+                                    })
+                                  }
+                                >
+                                  P
+                                </button>
+                              )
                             ) : (
-                              <button
-                                style={{ backgroundColor: "var(--secColor-1)" }}
-                                onClick={() =>
-                                  markAttendance({
-                                    status: ATTENDANCE_OPTIONS.PRESENT,
-                                    user: emp.id,
-                                    date,
-                                  })
-                                }
-                              >
-                                P
-                              </button>
-                            )
-                          ) : (
-                            <>
-                              <button
-                                style={{ backgroundColor: "var(--secColor-1)" }}
-                                onClick={() =>
-                                  markAttendance({
-                                    status: ATTENDANCE_OPTIONS.PRESENT,
-                                    user: emp.id,
-                                    date,
-                                  })
-                                }
-                              >
-                                P
-                              </button>
-                              <button
-                                style={{
-                                  backgroundColor: "var(--textColor-3)",
-                                }}
-                                onClick={() =>
-                                  markAttendance({
-                                    status: ATTENDANCE_OPTIONS.ABSENT,
-                                    user: emp.id,
-                                    date,
-                                  })
-                                }
-                              >
-                                A
-                              </button>
-                            </>
-                          )}
-                        </div>}
+                              <>
+                                <button
+                                  style={{
+                                    backgroundColor: "var(--secColor-1)",
+                                  }}
+                                  onClick={() =>
+                                    markAttendance({
+                                      status: ATTENDANCE_OPTIONS.PRESENT,
+                                      user: emp.id,
+                                      date,
+                                    })
+                                  }
+                                >
+                                  P
+                                </button>
+                                <button
+                                  style={{
+                                    backgroundColor: "var(--textColor-3)",
+                                  }}
+                                  onClick={() =>
+                                    markAttendance({
+                                      status: ATTENDANCE_OPTIONS.ABSENT,
+                                      user: emp.id,
+                                      date,
+                                    })
+                                  }
+                                >
+                                  A
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        )}
                       </td>
                     </tr>
                   );

@@ -26,6 +26,7 @@ import useLongPress from "../../../Hooks/useLongPress";
 import { MdOutlineClear } from "react-icons/md";
 import { useSelector } from "react-redux";
 import EmployeeService from "../../../Services/EmployeeService";
+import AttendanceService from "../../../Services/AttendanceService";
 
 const Leaves = () => {
   //States
@@ -183,8 +184,21 @@ const Leaves = () => {
       status: leave_status,
       user: leave.user?.id,
     });
-    toast.success(`Status changed to ${leave_status} Successfully.`);
+    if (leave_status === LEAVE_STATUS.ACCEPT) {
+      await AttendanceService.giveLeave(
+        leave.user?.id,
+        leave.from_date,
+        leave.to_date
+      );
+    } else if (leave_status === LEAVE_STATUS.REJECT) {
+      await AttendanceService.cancelLeave(
+        leave.user?.id,
+        leave.from_date,
+        leave.to_date
+      );
+    }
     await getAllLeavesAdmin();
+    toast.success(`Status changed to ${leave_status} Successfully.`);
     setLoader(false);
   };
 
@@ -264,10 +278,7 @@ const Leaves = () => {
                           <h3>{leave.leave_type}</h3>
                         </td>
                         <td data-name={"Status"} className="color-td">
-                          <h3
-                          >
-                            {leave.status}
-                          </h3>
+                          <h3>{leave.status}</h3>
                         </td>
                         <td data-name={"Actions"}>
                           <div
@@ -698,10 +709,7 @@ const Leaves = () => {
                             <h3>{leave.leave_type}</h3>
                           </td>
                           <td data-name={"Status"} className="color-td">
-                            <h3
-                            >
-                              {leave.status}
-                            </h3>
+                            <h3>{leave.status}</h3>
                           </td>
                           {showCheckBoxes ? null : (
                             <td data-name={"Actions"}>
