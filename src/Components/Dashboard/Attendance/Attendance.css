@@ -12,6 +12,10 @@
         font-weight: 400;
         transition: var(--transition);
         background: transparent;
+        option{
+          color:var(--textColor-1);
+          background: var(--bgColor-1);
+        }
       }
       input:placeholder-shown,
       select.placeholder {
