@@ -188,7 +188,8 @@ const Leaves = () => {
       await AttendanceService.giveLeave(
         leave.user?.id,
         leave.from_date,
-        leave.to_date
+        leave.to_date,
+        leave.leave_type
       );
     } else if (leave_status === LEAVE_STATUS.REJECT) {
       await AttendanceService.cancelLeave(

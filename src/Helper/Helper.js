@@ -271,6 +271,10 @@ export const LEAVE_TYPES = {
   ]
 };
 
+export const isPaidLeave = (leaveName)=>{
+  return LEAVE_TYPES.PAID_LEAVES.includes(leaveName)
+}
+
 export const LEAVE_STATUS = {
   ACCEPT: 'Accept',
   REJECT: 'Reject',
@@ -314,5 +318,14 @@ export const monthNames = [
   "November",
   "December",
 ];
+
+export const normalizeNum = (num)=>{
+  return `₹${Number((Number(num)).toFixed(0)).toLocaleString("en-IN")}`;
+}
+
+export const getDaysInMonth = (month, year) =>{
+  const nextMonth = new Date(year, month + 1, 0);
+  return nextMonth.getDate();
+}
 
 

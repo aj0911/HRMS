@@ -21,8 +21,8 @@ const Attendance = () => {
   const [page, setPage] = useState(1);
 
   //Methods
-  const getAllEmployees = async () => {
-    setLoader(true);
+  const getAllEmployees = async (load=false) => {
+    setLoader(!load);
     const val = [];
     const allEmps = await EmployeeService.getAllEmployees();
     for (let emp of allEmps) {
@@ -39,8 +39,8 @@ const Attendance = () => {
     setLoader(false);
   };
 
-  const handleChange = async () => {
-    setLoader(true);
+  const handleChange = async (load=false) => {
+    setLoader(!load);
     const val = [];
     const allEmps = await EmployeeService.getAllEmployees();
     for (let emp of allEmps) {
@@ -63,7 +63,6 @@ const Attendance = () => {
   };
 
   const markAttendance = async (data) => {
-    setLoader(true);
     const attendance = await AttendanceService.attendanceExist(
       data.user,
       data.date
@@ -77,9 +76,8 @@ const Attendance = () => {
       await AttendanceService.create(data);
       toast.success("Attendance Status Marked to " + data.status);
     }
-    if (text) await handleChange();
-    else await getAllEmployees();
-    setLoader(false);
+    if (text) await handleChange(true);
+    else await getAllEmployees(true);
   };
 
   useEffect(() => {

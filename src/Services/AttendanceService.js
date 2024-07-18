@@ -1,4 +1,10 @@
-import { ATTENDANCE_OPTIONS, convertToDoubleDigit } from "../Helper/Helper";
+import {
+  ATTENDANCE_OPTIONS,
+  convertToDoubleDigit,
+  getDaysInMonth,
+  isPaidLeave,
+  normalizeNum,
+} from "../Helper/Helper";
 import EmployeeService from "./EmployeeService";
 import Service from "./Service";
 
@@ -63,7 +69,7 @@ export default class AttendanceService extends Service {
       }
     }
   }
-  static async giveLeave(userId, fromDate, toDate) {
+  static async giveLeave(userId, fromDate, toDate, leaveName) {
     const dateRange = this.getDateRange(fromDate, toDate);
     for (let date of dateRange) {
       const attendance = await this.attendanceExist(userId, date);
@@ -71,7 +77,9 @@ export default class AttendanceService extends Service {
         // Update
         await this.update(attendance.id, {
           user: userId,
-          status: ATTENDANCE_OPTIONS.PRESENT,
+          status: isPaidLeave(leaveName)
+            ? ATTENDANCE_OPTIONS.PRESENT
+            : ATTENDANCE_OPTIONS.ABSENT,
           date,
           isLeave: true,
         });
@@ -112,5 +120,45 @@ export default class AttendanceService extends Service {
     }
 
     return dateArray;
+  }
+
+  static async giveParameters(monthIndex, year, userID,ctc) {
+    const all_attendances = Object.values((await this.read()) || []);
+    let total_present_days = 0;
+    let total_absent_days = 0;
+    for (let x of all_attendances) {
+      const dt = new Date(x.date);
+      if (dt.getMonth() == monthIndex && dt.getFullYear() == year && x.user === userID) {
+        //month attendance only;
+        if (x.status === ATTENDANCE_OPTIONS.PRESENT)
+          total_present_days++;
+        else total_absent_days++;
+      }
+    }
+    //Calculations
+    const gross_salary = (ctc*100000)/12;
+    const gross_salary_per_day = gross_salary/getDaysInMonth(monthIndex,year);
+    const hra = 0.2*gross_salary;
+    const da = 0.1*gross_salary;
+    const basic_salary = gross_salary - hra - da;
+    const pf = 0.12*basic_salary;
+    const esi = 0.0175*gross_salary;
+    const deductions = hra + da + pf + esi + (total_absent_days)*gross_salary_per_day;
+    const net_salary = gross_salary - deductions;
+
+    return {
+      total_present_days,
+      total_absent_days,
+      total_attendance_marked: total_present_days + total_absent_days,
+      gross_salary:normalizeNum(gross_salary),
+      gross_salary_per_day:normalizeNum(gross_salary_per_day),
+      hra:normalizeNum(hra),
+      da:normalizeNum(da),
+      basic_salary:normalizeNum(basic_salary),
+      pf:normalizeNum(pf),
+      esi:normalizeNum(esi),
+      deductions:normalizeNum(deductions),
+      net_salary:normalizeNum(net_salary)
+    }
   }
 }
