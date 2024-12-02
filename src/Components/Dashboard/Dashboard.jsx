@@ -70,60 +70,70 @@ const Dashboard = () => {
       icon: <BiSolidDashboard />,
       component: <DashboardBox />,
       heading: [`Hello ${auth.user?.name} 👋🏻`, greeting()],
+      roles:["USER","ADMIN","SUPER_ADMIN"]
     },
     {
       name: "All Employees",
       icon: <PiUsersThree />,
       component: <Employees />,
       heading: [`All Employees`, `All Employee Information`],
+      roles:["ADMIN","SUPER_ADMIN"]
     },
     {
       name: "All Departments",
       icon: <PiUserSwitchDuotone />,
       component: <Departments />,
       heading: [`All Departments`, `All Departments Information`],
+      roles:["ADMIN","SUPER_ADMIN"]
     },
     {
       name: "Attendance",
       icon: <LuCalendarCheck />,
       component: <Attendance />,
       heading: [`Attendance`, `All Employee Attendance`],
+      roles:["ADMIN","SUPER_ADMIN"]
     },
     {
       name: "Payroll",
       icon: <AiOutlineDollar />,
       component: <Payroll />,
       heading: [`Payroll`, `All Employee Payroll`],
+      roles:["ADMIN","SUPER_ADMIN"]
     },
     {
       name: "Jobs",
       icon: <FaBriefcase />,
       component: <Jobs />,
       heading: [`Jobs`, `Show All Jobs`],
+      roles:["ADMIN","SUPER_ADMIN"]
     },
     {
       name: "Candidates",
       icon: <TbUsers />,
       component: <Candidates />,
       heading: [`Candidates`, `Show All Candidates`],
+      roles:["ADMIN","SUPER_ADMIN"]
     },
     {
       name: "Leaves",
       icon: <LuClipboardList />,
       component: <Leaves />,
       heading: [`Leaves`, `View All Leaves`],
+      roles:["USER","ADMIN","SUPER_ADMIN"]
     },
     {
       name: "Holidays",
       icon: <FaRegCalendarAlt />,
       component: <Holidays />,
       heading: [`Holidays`, `All Holidays List`],
+      roles:["USER","ADMIN","SUPER_ADMIN"]
     },
     {
       name: "Settings",
       icon: <LuSettings />,
       component: <Settings handleTheme={handleTheme} />,
       heading: [`Settings`, `All System Settings`],
+      roles:["USER","ADMIN","SUPER_ADMIN"]
     },
   ];
 
@@ -141,7 +151,9 @@ const Dashboard = () => {
             <h1>HRMS</h1>
           </div>
           <nav>
-            {menus.map((menu, key) => (
+            {menus.map((menu, key) => {
+              if(menu?.roles?.includes(auth?.user?.role))
+              return(
               <button
                 className={key === component ? "active" : ""}
                 onClick={() => {
@@ -153,7 +165,7 @@ const Dashboard = () => {
                 {menu.icon}
                 <h3>{menu.name}</h3>
               </button>
-            ))}
+            )})}
           </nav>
           <div className="btns">
             <button

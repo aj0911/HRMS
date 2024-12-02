@@ -9,13 +9,14 @@ import {
 } from "react-icons/fa";
 import "../Employees/Employees.css";
 import CheckBox from "../../../Helper/CheckBox/CheckBox";
-import { formatDate, getDay, validateForm } from "../../../Helper/Helper";
+import { formatDate, getDay, Roles, validateForm } from "../../../Helper/Helper";
 import toast from "react-hot-toast";
 import HolidayService from "../../../Services/HolidayService";
 import Loader from "../../Loader/Loader";
 import { FaPencil } from "react-icons/fa6";
 import useLongPress from "../../../Hooks/useLongPress";
 import { MdOutlineClear } from "react-icons/md";
+import { useSelector } from "react-redux";
 
 const Holidays = () => {
   //States
@@ -30,6 +31,7 @@ const Holidays = () => {
   const itemsPerPage = 10;
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(1);
+  const auth = useSelector((state) => state.auth);
   const tableItemLongPressEvent = useLongPress(() => {
     if (window.innerWidth > 999) setShowCheckBoxes(true);
   }, 500);
@@ -263,7 +265,7 @@ const Holidays = () => {
   else
     return (
       <div className="Employee">
-        {showCheckBoxes ? (
+        {showCheckBoxes  && auth.user?.role!==Roles.USER ? (
           <div className="top">
             <div className="btns">
               {delArr.length > 0 ? (
@@ -286,15 +288,18 @@ const Holidays = () => {
         ) : (
           <div className="top">
             <SearchBar onChange={(e) => setText(e.target.value)} />
-            <div className="btns">
-              <button
-                id="addBtn"
-                onClick={() => setAddModal({ isShow: true, data: {} })}
-              >
-                <FaPlusCircle />
-                <h3>Add Holidays</h3>
-              </button>
-            </div>
+              {
+                 auth.user?.role!==Roles.USER && 
+                <div className="btns">
+                  <button
+                    id="addBtn"
+                    onClick={() => setAddModal({ isShow: true, data: {} })}
+                  >
+                    <FaPlusCircle />
+                    <h3>Add Holidays</h3>
+                  </button>
+                </div>
+              }
           </div>
         )}
         {loader ? (
@@ -306,7 +311,7 @@ const Holidays = () => {
             <table>
               <thead>
                 <tr>
-                  {showCheckBoxes ? (
+                  {showCheckBoxes  && auth.user?.role!==Roles.USER ? (
                     <td>
                       <CheckBox
                         onChange={async (val) => {
@@ -319,7 +324,7 @@ const Holidays = () => {
                   <td>Date</td>
                   <td>Day</td>
                   <td>Holiday Name</td>
-                  {!showCheckBoxes ? <td>Action</td> : null}
+                  {!showCheckBoxes && auth.user?.role!==Roles.USER ? <td>Action</td> : null}
                 </tr>
               </thead>
               <tbody>
@@ -335,7 +340,7 @@ const Holidays = () => {
                         {...tableItemLongPressEvent}
                         className={delArr.includes(holiday.id) ? "active" : ""}
                       >
-                        {showCheckBoxes ? (
+                        {showCheckBoxes && auth.user?.role!==Roles.USER ? (
                           <td>
                             <CheckBox
                               value={delArr.includes(holiday.id)}
@@ -370,7 +375,7 @@ const Holidays = () => {
                         <td data-name={"Holiday Name"}>
                           <h3>{holiday.name}</h3>
                         </td>
-                        {showCheckBoxes ? null : (
+                        {showCheckBoxes || auth.user?.role===Roles.USER ? null : (
                           <td data-name={"Actions"}>
                             <div className="table-box">
                               <FaPencil
